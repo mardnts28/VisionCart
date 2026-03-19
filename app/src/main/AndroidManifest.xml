@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.visioncart1">
+
+
+    <!--              PERMISSIONS                -->
+
+    <!-- Camera for barcode scanning -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- Microphone for voice assistant -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- Vibration for feedback -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- Internet (optional - for future product lookup API) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Camera hardware feature (not required = app works without camera too) -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"/>
+
+    <!--              APPLICATION                -->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Vision Cart"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.VisionCart1">
+
+
+        <!--         MAIN / HOME SCREEN          -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            </activity>
+
+
+        <!--           SCAN SCREEN               -->
+            <activity
+                android:name=".ScanActivity"
+                android:exported="false"
+                android:screenOrientation="portrait"/>
+
+            <!--        PRODUCT DETAIL SCREEN        -->
+            <activity
+                android:name=".ProductDetailActivity"
+                android:exported="false"
+                android:screenOrientation="portrait"/>
+
+            <!--          HISTORY SCREEN             -->
+            <activity
+                android:name=".HistoryActivity"
+                android:exported="false"
+                android:screenOrientation="portrait"/>
+
+            <!--          SETTINGS SCREEN            -->
+            <activity
+                android:name=".SettingsActivity"
+                android:exported="false"
+                android:screenOrientation="portrait"/>
+
+        </application>
+
+    </manifest>
