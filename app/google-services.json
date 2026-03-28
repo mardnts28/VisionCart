@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "114594161611",
+    "project_id": "visioncart-9be6b",
+    "storage_bucket": "visioncart-9be6b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114594161611:android:a03f767e1359ea243c8c4e",
+        "android_client_info": {
+          "package_name": "com.example.visioncart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOvDxQFKjoApdNY_4GBF1mFmh1lQd5a74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -19,6 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "VisionCart1"
+rootProject.name = "VisionCart"
 include(":app")
+
  

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.VisionCart1"
+    <style name="Theme.VisionCart"
         parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/yellow_primary</item>
         <item name="colorPrimaryVariant">@color/yellow_dark</item>

@@ -176,6 +176,13 @@
                 android:background="@drawable/bg_scanner_box"
                 android:layout_marginBottom="16dp">
 
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"/>
+
+
                 <!-- ── IDLE STATE CORNERS (yellow) ── -->
                 <ImageView
                     android:id="@+id/cornerIdleTL"
