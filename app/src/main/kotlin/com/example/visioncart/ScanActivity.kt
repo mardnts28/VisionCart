@@ -1,7 +1,9 @@
 package com.example.visioncart
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -43,7 +45,7 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ScanActivity : AppCompatActivity() {
+class ScanActivity : BaseActivity() {
 
     private var isScanning = false
     private var isProcessing = false
@@ -68,6 +70,10 @@ class ScanActivity : AppCompatActivity() {
     private var tvScanBtnText: TextView? = null
     private var btnScanNow: LinearLayout? = null
     private var voiceAssistantCard: RelativeLayout? = null
+
+    override fun onTtsReady() {
+        speak("Scanning Screen. Align barcode with the frame and wait for vibration.")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -205,7 +211,16 @@ class ScanActivity : AppCompatActivity() {
 
     private fun onBarcodeDetected(barcode: String, bitmap: Bitmap?) {
         isProcessing = true
+        
+        // Vibration feedback
+        val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("vibration_enabled", true)) {
+            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator
+            vibrator.vibrate(100)
+        }
+
         runOnUiThread {
+
             tvDetecting?.text = "Detected: $barcode"
             voiceAssistantCard?.let { showFadeIn(it) }
             tvInfoCard?.text = "Barcode found! Fetching data..."

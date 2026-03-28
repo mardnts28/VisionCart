@@ -28,6 +28,8 @@ Individuals with low vision (BCVA 20/70 to 20/400) face significant barriers in 
 - **"Priority Alert" Pitch Scaling:** 
   - **Normal Pitch:** For general product info.
   - **High Pitch / Urgent:** Automatically triggered when reading **Allergen Warnings** or **Unhealthy** items (based on custom nutritional thresholds).
+  - **Instant Context:** It lets the user know "pay attention, this is important" without them needing to listen for specific words—the change in voice alone conveys the warning.
+
 
 ---
 

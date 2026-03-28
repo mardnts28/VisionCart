@@ -1,5 +1,6 @@
 package com.example.visioncart
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognitionListener
@@ -12,12 +13,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.example.visioncart.R
 import java.util.ArrayList
 import java.util.Locale
 
-class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class HistoryActivity : BaseActivity() {
 
     data class ScannedProduct(
         var brand: String?,
@@ -44,16 +43,17 @@ class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tvItemCount: TextView? = null
     private var btnClear: LinearLayout? = null
     
-    private var tts: TextToSpeech? = null
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening = false
+
+    override fun onTtsReady() {
+        speak("History Screen. You have ${historyList.size} items scanned recently.")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
 
-        // Initialize TTS
-        tts = TextToSpeech(this, this)
 
         // Initialize Speech Recognizer
         setupSpeechRecognizer()
@@ -68,38 +68,58 @@ class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val sampleItem = findViewById<RelativeLayout>(R.id.sampleHistoryItem)
         sampleItem?.visibility = View.GONE
 
-        findViewById<LinearLayout>(R.id.btnScanFirst).setOnClickListener {
+        val btnScanFirst = findViewById<LinearLayout>(R.id.btnScanFirst)
+        setVocalButton(btnScanFirst, "Scan your first product")
+        btnScanFirst?.setOnClickListener {
+            vibrate()
             startActivity(Intent(this, ScanActivity::class.java))
         }
 
+        setVocalButton(btnClear, "Clear all history")
         btnClear?.setOnClickListener {
+            vibrate(100)
             historyList.clear()
             refreshUI()
+            speak("History cleared")
         }
 
         // Bottom nav
-        findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
+        val navHome = findViewById<LinearLayout>(R.id.navHome)
+        val navScan = findViewById<LinearLayout>(R.id.navScan)
+        val navSettings = findViewById<LinearLayout>(R.id.navSettings)
+
+        setVocalButton(navHome, "Home Screen")
+        setVocalButton(navScan, "Scan Screen")
+        setVocalButton(navSettings, "Settings Screen")
+
+        navHome?.setOnClickListener {
+            vibrate()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
-        findViewById<LinearLayout>(R.id.navScan).setOnClickListener {
+        navScan?.setOnClickListener {
+            vibrate()
             startActivity(Intent(this, ScanActivity::class.java))
         }
-        findViewById<LinearLayout>(R.id.navSettings).setOnClickListener {
+        navSettings?.setOnClickListener {
+            vibrate()
             startActivity(Intent(this, SettingsActivity::class.java))
         }
+
 
         refreshUI()
     }
 
     override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts?.language = Locale.US
-        }
+        super.onInit(status)
     }
 
     private fun setupSpeechRecognizer() {
+        val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("voice_enabled", true)) return
+
         if (SpeechRecognizer.isRecognitionAvailable(this)) {
+
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -147,8 +167,8 @@ class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun speakStructured(text: String, isWarning: Boolean = false) {
-        tts?.setPitch(if (isWarning) 1.5f else 1.0f)
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "structured_audio")
+        globalTts?.setPitch(if (isWarning) 1.5f else 1.0f)
+        globalTts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "structured_audio")
     }
 
     private fun speakProduct(product: ScannedProduct) {
@@ -161,11 +181,11 @@ class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         
         val healthText = "Health rating is $health"
         val isUnhealthy = health.contains("unhealthy", ignoreCase = true)
-        tts?.setPitch(if (isUnhealthy) 1.5f else 1.0f)
-        tts?.speak(healthText, TextToSpeech.QUEUE_ADD, null, "health")
+        globalTts?.setPitch(if (isUnhealthy) 1.5f else 1.0f)
+        globalTts?.speak(healthText, TextToSpeech.QUEUE_ADD, null, "health")
 
-        tts?.setPitch(1.0f)
-        tts?.speak("Expires on $expires", TextToSpeech.QUEUE_ADD, null, "expires")
+        globalTts?.setPitch(1.0f)
+        globalTts?.speak("Expires on $expires", TextToSpeech.QUEUE_ADD, null, "expires")
 
         val allergenText = if (allergens.lowercase().contains("none")) {
             "No allergens detected"
@@ -173,9 +193,10 @@ class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "Warning. Contains allergens: $allergens"
         }
         val hasAllergens = !allergens.lowercase().contains("none")
-        tts?.setPitch(if (hasAllergens) 1.6f else 1.0f)
-        tts?.speak(allergenText, TextToSpeech.QUEUE_ADD, null, "allergens")
+        globalTts?.setPitch(if (hasAllergens) 1.6f else 1.0f)
+        globalTts?.speak(allergenText, TextToSpeech.QUEUE_ADD, null, "allergens")
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -240,8 +261,6 @@ class HistoryActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onDestroy() {
-        tts?.stop()
-        tts?.shutdown()
         speechRecognizer?.destroy()
         super.onDestroy()
     }
