@@ -1,65 +1,75 @@
-# VisionCart 🛒
-**The Multimodal Grocery Assistant for Low-Vision Shoppers**
+# VisionCart
 
-> An accessible mobile application designed to empower individuals with low vision to shop for groceries independently using a combination of **Camera**, **Voice**, and **Audio** inputs.
+Advanced Multimodal Grocery Assistant for Vision Accessibility
 
----
-
-## 🌟 The Vision
-Individuals with low vision (BCVA 20/70 to 20/400) face significant barriers in grocery stores: small-print labels, complex ingredient lists, and hidden expiration dates. **VisionCart** bridges this gap by replacing visual effort with multimodal interaction.
-
-## 🛠️ The Three Multimodal Pillars
-
-### 1. Camera Input — See 👁️
-- **Real-Time Scanning:** Uses Google **ML Kit Barcode Scanning** for immediate product identification.
-- **AI Expiration Detection:** Leverages **Google Gemini 1.5 Flash** to vision-read printed expiration dates that barcodes don't carry.
-- **No Manual Focus:** The app auto-detects barcodes without needing a button press.
-
-### 2. Voice Input — Speak 🗣️
-- **Hands-Free Navigation:** Built-in **Speech Recognizer** allows users to control the app through voice.
-- **Commands:** 
-  - *"Read ingredients"* — Deep-dive into the product's contents.
-  - *"Any allergens?"* — Immediate confirmation of product safety.
-  - *"Repeat"* — Re-hear the structured product summary.
-  - *"Back"* — Quickly return to the scanner.
-
-### 3. Audio Output — Hear 🎧
-- **Structured TTS Summary:** Delivers information in a logical hierarchy: `Name -> Health Rating -> Expiration -> Allergens`.
-- **"Priority Alert" Pitch Scaling:** 
-  - **Normal Pitch:** For general product info.
-  - **High Pitch / Urgent:** Automatically triggered when reading **Allergen Warnings** or **Unhealthy** items (based on custom nutritional thresholds).
-  - **Instant Context:** It lets the user know "pay attention, this is important" without them needing to listen for specific words—the change in voice alone conveys the warning.
-
+VisionCart is a specialized mobile application designed to empower individuals with low vision to shop for groceries independently. By combining state-of-the-art AI, lightning-fast barcode scanning, and multi-themed high-contrast interfaces, VisionCart transforms complex visual information into clear audio and haptic feedback.
 
 ---
 
-## 🏗️ Technical Architecture
+## Key Features
 
-- **Language:** 100% Kotlin
-- **Networking:** Retrofit + OkHttp + Kotlin Serialization
-- **Database (Global):** Open Food Facts API (Real-time cloud lookup)
-- **AI Engine:** 
-  - **ML Kit:** On-Device Barcode Detection
-  - **Generative AI SDK:** Google Gemini Pro Vision
-- **UI/UX (Accessibility):**
-  - **60dp Tap Zones:** Minimum target size for all interactive elements.
-  - **High Contrast:** Pure black backgrounds with bright Yellow/White text.
-  - **Dynamic Scaling:** Fully compatible with Android magnification and TalkBack.
+### 1. Intelligent Product Recognition
+*   **Fast Barcode Scanning**: Powered by Google ML Kit, the scanner identifies products instantly without requiring manual focus or button presses.
+*   **Gemini AI Integration**: Uses Google Gemini 1.5 Flash to identify products and detect printed expiration dates that are not encoded in standard barcodes.
+*   **AI Question & Answer**: Users can ask specific questions about a product (e.g., "Does this contain nuts?" or "Is this healthy?") for immediate AI-driven answers.
 
-## 🚀 Getting Started
+### 2. High-Contrast Visual Customization
+VisionCart features three distinct, professionally designed color schemes optimized for different types of visual impairment:
+*   **Yellow on Black**: The primary high-visibility theme for maximum contrast.
+*   **White on Blue**: A cool, high-detail theme for reduced eye strain.
+*   **Black on White**: A classic high-contrast light mode for well-lit environments.
 
-To run the application with full AI capabilities:
+### 3. Advanced Accessibility Support
+*   **Extra Large Font Scaling**: All primary buttons and UI elements use dynamic sizing. When system fonts are set to "Extra Large," the interface automatically expands to prevent clipping and maintain legibility.
+*   **Speaking Assistant**: A persistent voice assistant provides constant orientation, reading navigation labels and product details aloud.
+*   **Haptic Feedback**: Meaningful vibration patterns confirm successful scans, navigation clicks, and critical alerts.
 
-1.  Clone the repository.
-2.  Add your **Google Gemini API Key** to `local.properties`:
-    ```properties
-    GEMINI_API_KEY=your_key_here
+### 4. Offline-First History
+*   **Room Database Persistence**: All scanned products are stored locally in a secure, high-performance database.
+*   **Shopping List Integration**: Users can "star" specific items in their history to create a quick-access shopping list for future trips.
+
+---
+
+## Technical Stack
+
+*   **Platform**: Native Android (Kotlin)
+*   **Architecture**: MVVM with Coroutines and Flow
+*   **AI Engine**: Google AI Studio (Gemini 1.5 Flash SDK) & ML Kit Barcode Scanning
+*   **Database**: Room Persistence Library
+*   **UI Components**: Material 3 with Custom High-Contrast Attributes
+*   **Network**: Retrofit 2 & OkHttp 4
+
+---
+
+## Setup and Installation
+
+To build and run VisionCart with full functionality, follow these steps:
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/mardnts28/VisionCart.git
     ```
-3.  Ensure your device has **Internet access** and **Camera permissions**.
-4.  Build and Run!
 
-## 🌏 Impact in the Philippines
-In the Philippine context, uncorrected refractive error is a leading cause of visual impairment. VisionCart provides a free, technology-driven solution for millions of Filipinos experiencing functional low vision daily, restoring their autonomy and privacy in the supermarket.
+2.  **Configure API Keys**:
+    Add your Google Gemini API Key to the `local.properties` file in the project root:
+    ```properties
+    GEMINI_API_KEY=your_api_key_here
+    ```
+
+3.  **Firebase Setup**:
+    Place your `google-services.json` file in the `app/` directory.
+
+4.  **Hardware Requirements**:
+    *   Android Device running API 24 (Nougat) or higher.
+    *   Camera with Autofocus support.
+    *   Active Internet connection (required for Gemini AI features).
 
 ---
-*Created with ❤️ for Vision Accessibility.*
+
+## Privacy and Security
+
+VisionCart is designed with user privacy in mind. Sensitive configuration files such as `local.properties` and `google-services.json` are excluded from version control via `.gitignore`. Product history is stored strictly on the local device and is never uploaded to external servers without explicit user action.
+
+---
+
+*Mission: Restoring autonomy and privacy to the grocery shopping experience through multimodal technology.*
