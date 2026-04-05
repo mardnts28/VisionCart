@@ -1,9 +1,9 @@
 package com.example.visioncart.repository
 
-import com.example.visioncart.HistoryActivity
-import com.example.visioncart.api.FoodApiService
-import com.example.visioncart.util.NutritionCalculator
 import com.example.visioncart.BuildConfig
+import com.example.visioncart.api.FoodApiService
+import com.example.visioncart.model.ScannedProduct
+import com.example.visioncart.util.NutritionCalculator
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,7 +31,7 @@ class FoodRepository {
             .create(FoodApiService::class.java)
     }
 
-    suspend fun fetchProduct(barcode: String): HistoryActivity.ScannedProduct? {
+    suspend fun fetchProduct(barcode: String): ScannedProduct? {
         return try {
             val response = apiService.getProduct(barcode, BuildConfig.OFF_USER_AGENT)
             if (response.isSuccessful) {
@@ -39,19 +39,26 @@ class FoodRepository {
                 if (body?.status == 1 && body.product != null) {
                     val p = body.product
                     val rating = NutritionCalculator.calculateRating(p.nutriments)
+                    val cals = p.nutriments?.energyKcal100g ?: 0.0
+                    val sugar = p.nutriments?.sugars100g ?: 0.0
+                    val fat = p.nutriments?.fat100g ?: 0.0
+                    val salt = p.nutriments?.salt100g ?: 0.0
                     
-                    HistoryActivity.ScannedProduct(
+                    val unit = if (p.quantity?.lowercase()?.contains("ml") == true) "ml" else "g"
+                    val detailedRating = "${rating.label}. Energy: ${cals.toInt()} kcal, Sugar: ${sugar}${unit}, Fats: ${fat}${unit}, Salt: ${salt}${unit} per 100${unit}."
+                    
+                    ScannedProduct(
                         brand = p.brands ?: "Unknown Brand",
                         name = p.productName ?: "Unknown Product",
                         price = "N/A", 
                         time = "Just now",
                         expires = "N/A", 
                         weight = p.quantity ?: "Unknown weight",
-                        barcode = p.code ?: barcode,
+                        barcode = barcode.trim(), 
                         category = p.categories?.split(",")?.firstOrNull() ?: "General",
                         ingredients = p.ingredientsText ?: "No ingredients listed",
                         allergens = p.allergens ?: "None listed",
-                        healthRating = rating.label
+                        healthRating = detailedRating
                     )
                 } else null
             } else null

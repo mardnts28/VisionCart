@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:background="?attr/appBackgroundColor"
     android:fitsSystemWindows="true">
 
 
@@ -31,7 +31,7 @@
                 android:layout_height="26dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_back"
-                android:tint="@color/text_white"/>
+                android:tint="?attr/appTextColor"/>
         </FrameLayout>
 
         <TextView
@@ -39,9 +39,29 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Product Details"
-            android:textColor="@color/text_white"
+            android:textColor="?attr/appTextColor"
             android:textSize="20sp"
             android:textStyle="bold"/>
+
+        <!-- Star Button -->
+        <FrameLayout
+            android:id="@+id/btnStar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/btnScanAgain"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_dark_rounded"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:id="@+id/ivStar"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_star"
+                android:tint="?attr/appTextSecondary"/>
+        </FrameLayout>
 
         <!-- Scan Again Button - increased to 60dp -->
         <FrameLayout
@@ -58,7 +78,7 @@
                 android:layout_height="26dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_scan"
-                android:tint="@color/text_white"/>
+                android:tint="?attr/appTextColor"/>
         </FrameLayout>
 
     </RelativeLayout>
@@ -69,7 +89,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/nav_bg"
+        android:background="?attr/appNavColor"
         android:orientation="horizontal">
 
 
@@ -86,12 +106,12 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_home"
-                android:tint="@color/text_gray"/>
+                android:tint="?attr/appTextSecondary"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Home"
-                android:textColor="@color/text_gray"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="10sp"/>
         </LinearLayout>
 
@@ -108,12 +128,12 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_scan"
-                android:tint="@color/text_gray"/>
+                android:tint="?attr/appTextSecondary"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Scan"
-                android:textColor="@color/text_gray"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="10sp"/>
         </LinearLayout>
 
@@ -130,12 +150,12 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_history"
-                android:tint="@color/text_gray"/>
+                android:tint="?attr/appTextSecondary"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="History"
-                android:textColor="@color/text_gray"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="10sp"/>
         </LinearLayout>
 
@@ -152,12 +172,12 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_settings"
-                android:tint="@color/text_gray"/>
+                android:tint="?attr/appTextSecondary"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Settings"
-                android:textColor="@color/text_gray"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="10sp"/>
         </LinearLayout>
 
@@ -182,7 +202,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="@color/bg_card">
+                android:background="?attr/appCardColor">
 
                 <!-- Product Image -->
                 <ImageView
@@ -201,10 +221,10 @@
                     android:layout_alignParentTop="true"
                     android:layout_margin="12dp"
                     android:text="Canned Goods"
-                    android:textColor="@color/bg_dark"
+                    android:textColor="?attr/appBackgroundColor"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:background="@drawable/bg_category_badge"
+                    android:background="@drawable/bg_nav_active"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:paddingTop="5dp"
@@ -228,7 +248,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Campbell's"
-                    android:textColor="@color/text_gray"
+                    android:textColor="?attr/appTextSecondary"
                     android:textSize="13sp"/>
 
                 <TextView
@@ -236,7 +256,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tomato Soup"
-                    android:textColor="@color/text_white"
+                    android:textColor="?attr/appTextColor"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:layout_marginTop="2dp"/>
@@ -259,7 +279,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Moderate"
-                        android:textColor="@color/bg_dark"
+                        android:textColor="?attr/appBackgroundColor"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -284,41 +304,53 @@
                     android:orientation="horizontal"
                     android:layout_marginBottom="8dp">
 
-                    <!-- Price Card -->
                     <LinearLayout
+                        android:id="@+id/btnEditPrice"
                         android:layout_width="0dp"
                         android:layout_height="70dp"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/bg_price_card"
                         android:orientation="vertical"
-                        android:padding="12dp">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <!-- replace ic_logo with $ / price icon -->
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@drawable/ic_peso"
-                                android:tint="@color/yellow_primary"
-                                android:layout_marginEnd="4dp"
-                                android:layout_gravity="center_vertical"/>
-                            <TextView
+                        android:padding="12dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="PRICE"
-                                android:textColor="@color/text_gray"
-                                android:textSize="10sp"
-                                android:letterSpacing="0.1"/>
-                        </LinearLayout>
+                                android:orientation="horizontal">
+                                <ImageView
+                                    android:layout_width="14dp"
+                                    android:layout_height="14dp"
+                                    android:src="@drawable/ic_peso"
+                                    android:tint="?attr/appPrimaryColor"
+                                    android:layout_marginEnd="4dp"
+                                    android:layout_gravity="center_vertical"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="PRICE"
+                                    android:textColor="@color/text_gray"
+                                    android:textSize="10sp"
+                                    android:letterSpacing="0.1"/>
+                            </LinearLayout>
+                            <ImageView
+                                android:layout_width="12dp"
+                                android:layout_height="12dp"
+                                android:layout_alignParentEnd="true"
+                                android:src="@drawable/ic_settings"
+                                android:tint="@color/text_gray"
+                                android:alpha="0.6"/>
+                        </RelativeLayout>
                         <TextView
                             android:id="@+id/tvPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="₱ 85.00"
-                            android:textColor="@color/yellow_primary"
+                            android:textColor="?attr/appPrimaryColor"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:layout_marginTop="4dp"/>
@@ -341,14 +373,14 @@
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:src="@drawable/ic_calendar"
-                                android:tint="#44DDAA"
+                                android:tint="?attr/appPrimaryColor"
                                 android:layout_marginEnd="4dp"
                                 android:layout_gravity="center_vertical"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="EXPIRES"
-                                android:textColor="@color/text_gray"
+                                android:textColor="?attr/appTextSecondary"
                                 android:textSize="10sp"
                                 android:letterSpacing="0.1"/>
                         </LinearLayout>
@@ -357,7 +389,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="December 2025"
-                            android:textColor="#44DDAA"
+                            android:textColor="?attr/appPrimaryColor"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:layout_marginTop="4dp"/>
@@ -389,14 +421,14 @@
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:src="@drawable/ic_box"
-                                android:tint="#6699FF"
+                                android:tint="?attr/appPrimaryColor"
                                 android:layout_marginEnd="4dp"
                                 android:layout_gravity="center_vertical"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="WEIGHT"
-                                android:textColor="@color/text_gray"
+                                android:textColor="?attr/appTextSecondary"
                                 android:textSize="10sp"
                                 android:letterSpacing="0.1"/>
                         </LinearLayout>
@@ -405,7 +437,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="305g"
-                            android:textColor="#6699FF"
+                            android:textColor="?attr/appPrimaryColor"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:layout_marginTop="4dp"/>
@@ -444,7 +476,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="051000012722"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:layout_marginTop="4dp"/>
@@ -458,7 +490,10 @@
             <LinearLayout
                 android:id="@+id/btnReadAloud"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
@@ -486,7 +521,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="READ ALOUD"
-                        android:textColor="@color/text_white"
+                        android:textColor="?attr/appBackgroundColor"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.08"/>
@@ -495,7 +530,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Hear all product information"
-                        android:textColor="#AAFFDD"
+                        android:textColor="?attr/appBackgroundColor"
+                        android:alpha="0.8"
                         android:textSize="11sp"/>
                 </LinearLayout>
 
@@ -529,7 +565,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Tomato Puree (Water, Tomato Paste), High Fructose Corn Syrup, Salt, Potassium Chloride, Natural Flavoring, Citric Acid, Ascorbic Acid (Vitamin C)."
-                    android:textColor="@color/text_white"
+                    android:textColor="?attr/appTextColor"
                     android:textSize="13sp"
                     android:lineSpacingMultiplier="1.5"/>
 
@@ -541,7 +577,7 @@
                 android:id="@+id/allergenCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_allergen_card"
+                android:background="#33FF4444" 
                 android:orientation="horizontal"
                 android:padding="14dp"
                 android:layout_marginStart="16dp"
@@ -579,7 +615,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Contains Wheat. Made in a facility that processes Tree Nuts."
-                        android:textColor="@color/text_white"
+                        android:textColor="?attr/appTextColor"
                         android:textSize="13sp"
                         android:lineSpacingMultiplier="1.4"/>
 
@@ -615,7 +651,7 @@
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:src="@drawable/ic_star"
-                            android:tint="@color/yellow_primary"
+                            android:tint="?attr/appPrimaryColor"
                             android:layout_marginEnd="8dp"
                             android:layout_gravity="center_vertical"/>
 
@@ -661,7 +697,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Calories"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="14sp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -685,7 +721,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Total Fat"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="14sp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -709,7 +745,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Sodium"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="14sp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -733,7 +769,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Total Carbs"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="14sp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -757,7 +793,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Sugars"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="14sp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -781,7 +817,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Protein"
-                            android:textColor="@color/text_white"
+                            android:textColor="?attr/appTextColor"
                             android:textSize="14sp"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -798,8 +834,87 @@
             </LinearLayout>
 
             <!-- ─────────────────────────────── -->
-            <!--  VOICE ASSISTANT READING CARD   -->
-            <!-- (shown when READ ALOUD tapped)  -->
+            <!--        GEMINI AI Q&A CARD       -->
+            <!-- ─────────────────────────────── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_dark_rounded"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_logo"
+                        android:tint="#AA66FF"
+                        android:layout_marginEnd="8dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ASK GEMINI ABOUT THIS PRODUCT"
+                        android:textColor="#AA66FF"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvAiResponse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ask questions like 'Is this safe for diabetics?' or 'Does it have peanuts?'"
+                    android:textColor="?attr/appTextColor"
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.4"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:orientation="horizontal">
+                    
+                    <EditText
+                        android:id="@+id/etQuestion"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_search_input"
+                        android:hint="Type your question..."
+                        android:textColor="?attr/appTextColor"
+                        android:textColorHint="@color/text_gray"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textSize="14sp"
+                        android:imeOptions="actionSend"
+                        android:inputType="text"/>
+
+                    <FrameLayout
+                        android:id="@+id/btnAskGemini"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_yellow_rounded"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_scan"
+                            android:tint="?attr/appBackgroundColor"/>
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- ─────────────────────────────── -->
             <RelativeLayout
                 android:id="@+id/voiceReadingCard"
@@ -816,14 +931,14 @@
                     android:id="@+id/voiceReadIconBg"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/bg_yellow_rounded"
+                    android:background="@drawable/bg_nav_active"
                     android:layout_centerVertical="true">
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_peso"
-                        android:tint="@color/bg_dark"/>
+                        android:tint="?attr/appBackgroundColor"/>
                 </FrameLayout>
 
                 <LinearLayout
@@ -838,7 +953,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="VOICE ASSISTANT"
-                        android:textColor="@color/yellow_primary"
+                        android:textColor="?attr/appPrimaryColor"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.1"/>
@@ -847,7 +962,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Product: Tomato Soup by Campbell's. Price: ₱ 85.00..."
-                        android:textColor="@color/text_white"
+                        android:textColor="?attr/appTextColor"
                         android:textSize="12sp"
                         android:layout_marginTop="3dp"
                         android:lineSpacingMultiplier="1.4"

@@ -14,6 +14,8 @@ serialization = "1.6.3"
 mlkit-barcode = "17.3.0"
 camerax = "1.4.1"
 generative-ai = "0.9.0"
+room = "2.6.1"
+ksp = "1.9.24-1.0.20" 
 
 
 [libraries]
@@ -36,9 +38,13 @@ camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", versi
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
 generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generative-ai" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

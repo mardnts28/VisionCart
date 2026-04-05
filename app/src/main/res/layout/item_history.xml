@@ -28,7 +28,7 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <!-- Speaker Button — yellow/olive background -->
+        <!-- Speaker Button — theme-aware background -->
         <FrameLayout
             android:id="@+id/btnSpeak"
             android:layout_width="36dp"
@@ -42,10 +42,10 @@
                 android:layout_height="18dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_volume"
-                android:tint="@color/yellow_primary"/>
+                android:tint="?attr/appPrimaryColor"/>
         </FrameLayout>
 
-        <!-- Arrow Button -->
+        <!-- Arrow Button — theme-aware tint -->
         <FrameLayout
             android:id="@+id/btnDetail"
             android:layout_width="36dp"
@@ -58,7 +58,7 @@
                 android:layout_height="18dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_go"
-                android:tint="@color/text_gray"/>
+                android:tint="?attr/appTextColor"/>
         </FrameLayout>
 
     </LinearLayout>
@@ -81,7 +81,7 @@
             android:id="@+id/tvBrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_gray"
+            android:textColor="?attr/appTextSecondary"
             android:textSize="11sp"/>
 
         <!-- Product Name -->
@@ -89,7 +89,7 @@
             android:id="@+id/tvProductName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_white"
+            android:textColor="?attr/appTextColor"
             android:textSize="14sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp"/>
@@ -106,7 +106,7 @@
                 android:id="@+id/tvPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/yellow_primary"
+                android:textColor="?attr/appPrimaryColor"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:layout_marginEnd="8dp"/>
@@ -117,7 +117,7 @@
                 android:layout_height="11dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_history"
-                android:tint="@color/text_gray"
+                android:tint="?attr/appTextSecondary"
                 android:layout_marginEnd="3dp"/>
 
             <!-- Time -->
@@ -125,10 +125,20 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_gray"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="11sp"
                 android:layout_gravity="center_vertical"/>
 
+            <!-- Star Indicator -->
+            <ImageView
+                android:id="@+id/ivItemStarred"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_star"
+                android:tint="?attr/appPrimaryColor"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

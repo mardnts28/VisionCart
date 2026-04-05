@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.visioncart.api.GeminiService
 import com.example.visioncart.repository.FoodRepository
+import com.example.visioncart.db.AppDatabase 
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
@@ -45,6 +46,11 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+import com.example.visioncart.MainActivity
+import com.example.visioncart.HistoryActivity
+import com.example.visioncart.ProductDetailActivity
+import com.example.visioncart.model.ScannedProduct
+
 class ScanActivity : BaseActivity() {
 
     private var isScanning = false
@@ -53,6 +59,11 @@ class ScanActivity : BaseActivity() {
     private val geminiService = GeminiService()
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var barcodeScanner: BarcodeScanner
+    private val database by lazy { AppDatabase.getDatabase(this) }
+    
+    // AI Fallback stuff
+    private var fallbackJob: kotlinx.coroutines.Job? = null
+    private var latestBitmap: Bitmap? = null
 
     // Views
     private var previewView: PreviewView? = null
@@ -142,6 +153,19 @@ class ScanActivity : BaseActivity() {
         isScanning = true
         showScanningUI()
         startCamera()
+        
+        // Start 3-second timer for AI Fallback
+        fallbackJob?.cancel()
+        fallbackJob = lifecycleScope.launch {
+            delay(3000)
+            if (isScanning && !isProcessing) {
+                runOnUiThread {
+                    tvInfoCard?.text = "Barcode difficult to see. Identifying via AI image instead..."
+                    speak("Barcode difficult to see. Identifying via AI image instead...")
+                }
+                identifyProductWithAI()
+            }
+        }
     }
 
     private fun showScanningUI() {
@@ -195,10 +219,13 @@ class ScanActivity : BaseActivity() {
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
             barcodeScanner.process(image)
                 .addOnSuccessListener { barcodes ->
+                    // Always try to keep a fresh bitmap for AI fallback
+                    latestBitmap = imageProxy.toBitmap()
+                    
                     if (barcodes.isNotEmpty() && !isProcessing) {
-                        // Capture bitmap for Gemini before closing imageProxy
-                        val bitmap = imageProxy.toBitmap()
-                        onBarcodeDetected(barcodes[0].displayValue ?: "", bitmap)
+                        fallbackJob?.cancel() // Cancel AI fallback
+                        val currentBitmap = latestBitmap
+                        onBarcodeDetected(barcodes[0].displayValue ?: "", currentBitmap)
                     }
                 }
                 .addOnCompleteListener {
@@ -211,13 +238,7 @@ class ScanActivity : BaseActivity() {
 
     private fun onBarcodeDetected(barcode: String, bitmap: Bitmap?) {
         isProcessing = true
-        
-        // Vibration feedback
-        val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
-        if (prefs.getBoolean("vibration_enabled", true)) {
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator
-            vibrator.vibrate(100)
-        }
+        vibrateSuccess()
 
         runOnUiThread {
 
@@ -238,12 +259,19 @@ class ScanActivity : BaseActivity() {
 
             if (product != null) {
                 // Combine data
-                product.expires = expiryFromAI ?: "January 2026" // Fallback
-                HistoryActivity.historyList.add(0, product)
+                product.expires = expiryFromAI ?: "Not clearly visible" // Accurate fallback
+                
+                // NEW: PERSISTENT SAVE
+                var insertedId = -1L
+                val saveJob = lifecycleScope.launch {
+                    insertedId = database.productDao().insertProduct(product)
+                }
+                saveJob.join() // Ensure ID is captured
                 
                 tvScanBtnText?.text = "DETECTED!"
                 delay(800)
                 val intent = Intent(this@ScanActivity, ProductDetailActivity::class.java).apply {
+                    putExtra("productId", insertedId)
                     putExtra("brand", product.brand)
                     putExtra("name", product.name)
                     putExtra("price", product.price)
@@ -259,6 +287,7 @@ class ScanActivity : BaseActivity() {
                 startActivity(intent)
             } else {
                 withContext(Dispatchers.Main) {
+                    vibrateError()
                     Toast.makeText(this@ScanActivity, "Product not in database.", Toast.LENGTH_SHORT).show()
                     isProcessing = false
                     tvDetecting?.text = "Detecting barcode..."
@@ -268,20 +297,83 @@ class ScanActivity : BaseActivity() {
     }
 
     private fun ImageProxy.toBitmap(): Bitmap? {
-        val plane = planes[0]
-        val buffer = plane.buffer
-        val bytes = ByteArray(buffer.remaining())
-        buffer.get(bytes)
+        val yBuffer = planes[0].buffer 
+        val uBuffer = planes[1].buffer 
+        val vBuffer = planes[2].buffer
+
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + uSize + vSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vBuffer.get(nv21, ySize, vSize)
+        uBuffer.get(nv21, ySize + vSize, uSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, this.width, this.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 100, out)
+        val imageBytes = out.toByteArray()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
+    private fun identifyProductWithAI() {
+        val bitmap = latestBitmap ?: return
+        isProcessing = true
         
-        // Simple conversion for YUV to Bitmap if needed
-        if (format == ImageFormat.YUV_420_888) {
-           val yubImage = YuvImage(bytes, ImageFormat.NV21, width, height, null)
-           val out = ByteArrayOutputStream()
-           yubImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
-           val imageBytes = out.toByteArray()
-           return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        lifecycleScope.launch {
+            val aiResult = geminiService.identifyProduct(bitmap)
+            if (aiResult != null && aiResult.contains("|")) {
+                val parts = aiResult.split("|")
+                val brand = parts.getOrNull(0)?.trim() ?: "Unknown"
+                val name = parts.getOrNull(1)?.trim() ?: "Product"
+                val weight = parts.getOrNull(2)?.trim() ?: "N/A"
+                
+                val product = ScannedProduct(
+                    brand = brand,
+                    name = name,
+                    price = "N/A",
+                    time = "Just now",
+                    expires = "N/A",
+                    weight = weight,
+                    barcode = "AI-DETECTED",
+                    category = "AI Identification",
+                    ingredients = "Not available via AI",
+                    allergens = "Caution: Use with care",
+                    healthRating = "AI Analysis"
+                )
+                
+                // NEW: PERSISTENT SAVE
+                var insertedId = -1L
+                val saveJob = lifecycleScope.launch {
+                    insertedId = database.productDao().insertProduct(product)
+                }
+                saveJob.join() // Ensure ID is captured
+                
+                val intent = Intent(this@ScanActivity, ProductDetailActivity::class.java).apply {
+                    putExtra("productId", insertedId)
+                    putExtra("brand", product.brand)
+                    putExtra("name", product.name)
+                    putExtra("price", product.price)
+                    putExtra("time", product.time)
+                    putExtra("expires", product.expires)
+                    putExtra("weight", product.weight)
+                    putExtra("barcode", product.barcode)
+                    putExtra("category", product.category)
+                    putExtra("ingredients", product.ingredients)
+                    putExtra("allergens", product.allergens)
+                    putExtra("healthRating", product.healthRating)
+                }
+                startActivity(intent)
+            } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@ScanActivity, "AI couldn't identify. Try again.", Toast.LENGTH_SHORT).show()
+                    isProcessing = false
+                    startScanning() // Restart timer
+                }
+            }
         }
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
 
     private fun showFadeIn(view: View) {

@@ -7,9 +7,23 @@ import android.speech.tts.TextToSpeech
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.app.AlertDialog
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.visioncart.api.GeminiService
+import com.example.visioncart.db.AppDatabase
+import kotlinx.coroutines.launch
 
 class ProductDetailActivity : BaseActivity() {
 
+    private var productId: Long = -1L
+    private var isStarred: Boolean = false
+    private var userPrice: String? = null
+    
     // Data from intent
     private var brand: String? = null
     private var name: String? = null
@@ -19,6 +33,11 @@ class ProductDetailActivity : BaseActivity() {
     private var ingredients: String? = null
     private var allergens: String? = null
     private var healthRating: String? = "Moderate"
+    private var weight: String? = "N/A"
+    private var barcode: String? = "N/A"
+
+    private val database by lazy { AppDatabase.getDatabase(this) }
+    private val geminiService = GeminiService()
 
     override fun onTtsReady() {
         startStructuredReadAloud()
@@ -30,6 +49,7 @@ class ProductDetailActivity : BaseActivity() {
 
         // Receive data
         val incoming = intent
+        productId = incoming.getLongExtra("productId", -1L)
         brand = incoming.getStringExtra("brand") ?: "Unknown"
         name = incoming.getStringExtra("name") ?: "Unknown"
         price = incoming.getStringExtra("price") ?: "₱00.00"
@@ -38,6 +58,10 @@ class ProductDetailActivity : BaseActivity() {
         ingredients = incoming.getStringExtra("ingredients") ?: "Not shown"
         allergens = incoming.getStringExtra("allergens") ?: "None"
         healthRating = incoming.getStringExtra("healthRating") ?: "Moderate"
+        weight = incoming.getStringExtra("weight") ?: "N/A"
+        barcode = incoming.getStringExtra("barcode") ?: "N/A"
+        isStarred = incoming.getBooleanExtra("isStarred", false)
+        userPrice = incoming.getStringExtra("userPrice")
 
         displayProductInfo()
 
@@ -46,9 +70,20 @@ class ProductDetailActivity : BaseActivity() {
             finish() 
         }
 
-        // Fix: Link Read Aloud button
         findViewById<LinearLayout>(R.id.btnReadAloud).setOnClickListener {
             startStructuredReadAloud()
+        }
+
+        findViewById<FrameLayout>(R.id.btnStar).setOnClickListener {
+            toggleStar()
+        }
+
+        findViewById<LinearLayout>(R.id.btnEditPrice).setOnClickListener {
+            showEditPriceDialog()
+        }
+
+        findViewById<FrameLayout>(R.id.btnAskGemini).setOnClickListener {
+            performAiQA()
         }
 
         // Navigation
@@ -69,12 +104,76 @@ class ProductDetailActivity : BaseActivity() {
     private fun displayProductInfo() {
         findViewById<TextView>(R.id.tvBrand).text = brand
         findViewById<TextView>(R.id.tvProductName).text = name
-        findViewById<TextView>(R.id.tvPrice).text = price
+        findViewById<TextView>(R.id.tvPrice).text = userPrice ?: price
         findViewById<TextView>(R.id.tvExpires).text = expires
         findViewById<TextView>(R.id.tvCategory).text = category
         findViewById<TextView>(R.id.tvIngredients).text = ingredients
         findViewById<TextView>(R.id.tvAllergens).text = allergens
         findViewById<TextView>(R.id.tvHealthRating)?.text = healthRating
+        findViewById<TextView>(R.id.tvWeight)?.text = weight
+        findViewById<TextView>(R.id.tvBarcode)?.text = barcode
+        updateStarUI()
+    }
+
+    private fun updateStarUI() {
+        val ivStar = findViewById<ImageView>(R.id.ivStar)
+        ivStar.alpha = if (isStarred) 1.0f else 0.4f
+        ivStar.setColorFilter(if (isStarred) ContextCompat.getColor(this, R.color.yellow_primary) else ContextCompat.getColor(this, R.color.text_gray))
+    }
+
+    private fun toggleStar() {
+        isStarred = !isStarred
+        vibrate(80)
+        updateStarUI()
+        speak(if (isStarred) "Item added to shopping list" else "Item removed from shopping list")
+        lifecycleScope.launch {
+            database.productDao().updateStarredStatus(productId, isStarred)
+        }
+    }
+
+    private fun showEditPriceDialog() {
+        val et = EditText(this)
+        et.setText(userPrice ?: price)
+        AlertDialog.Builder(this)
+            .setTitle("Enter Price")
+            .setView(et)
+            .setPositiveButton("Save") { _, _ ->
+                val newPrice = et.text.toString()
+                userPrice = newPrice
+                findViewById<TextView>(R.id.tvPrice).text = newPrice
+                speak("Price updated to $newPrice")
+                lifecycleScope.launch {
+                    database.productDao().updatePrice(productId, newPrice)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun performAiQA() {
+        val question = findViewById<EditText>(R.id.etQuestion).text.toString()
+        if (question.isEmpty()) return
+
+        val tvResponse = findViewById<TextView>(R.id.tvAiResponse)
+        tvResponse.text = "Gemini is thinking..."
+        speak("Asking Gemini...")
+
+        val productContext = "Brand: $brand, Name: $name, Ingredients: $ingredients, Allergens: $allergens, Category: $category"
+        
+        lifecycleScope.launch {
+            val answer = geminiService.askNutritionalQuestion(question, productContext)
+            tvResponse.text = answer ?: "I couldn't find an answer."
+            speak(answer)
+        }
+    }
+
+    override fun handleGlobalVoiceCommand(command: String) {
+        when {
+            command.contains("ingredients") -> speak("Ingredients for $name are: $ingredients")
+            command.contains("calories") -> speak("Checking nutrition...") 
+            command.contains("star") || command.contains("save") -> toggleStar()
+            else -> super.handleGlobalVoiceCommand(command)
+        }
     }
 
     private fun startStructuredReadAloud() {
@@ -82,24 +181,39 @@ class ProductDetailActivity : BaseActivity() {
         val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
         if (!prefs.getBoolean("voice_enabled", true)) return
 
-        val intro = "Product: $name. "
+        val allergenFound = allergens != null && !allergens!!.lowercase().contains("none")
+        val allergenMsg = if (allergenFound) "ATTENTION: Allergen Warning. This product contains: $allergens. Please be very careful." else "No allergens detected."
+        
+        val intro = "Product: $name by $brand. "
         val ratingMsg = "The health rating is $healthRating. "
         val expireMsg = "This product expires on $expires. "
-        val allergenMsg = if (allergens?.contains("None", true) == true) "No allergens detected." else "Warning: this contains $allergens."
 
-        // Read segments
-        globalTts?.setPitch(1.0f)
-        globalTts?.speak(intro, TextToSpeech.QUEUE_FLUSH, null, "intro")
+        // Show card UI
+        val card = findViewById<RelativeLayout>(R.id.voiceReadingCard)
+        card.visibility = View.VISIBLE
+        findViewById<TextView>(R.id.tvVoiceReadingText).text = intro + ratingMsg + expireMsg + allergenMsg
+        findViewById<TextView>(R.id.btnCloseReading).setOnClickListener {
+            card.visibility = View.GONE
+            globalTts?.stop()
+        }
+
+        // 1. Safety First: Read allergens with higher pitch if found
+        if (allergenFound) {
+            globalTts?.setPitch(1.6f)
+            globalTts?.speak(allergenMsg, TextToSpeech.QUEUE_FLUSH, null, "allergens")
+        } else {
+            globalTts?.setPitch(1.0f)
+            globalTts?.speak(intro, TextToSpeech.QUEUE_FLUSH, null, "intro")
+        }
         
-        // Priority alert check
-        if (healthRating == "Unhealthy") globalTts?.setPitch(1.3f) else globalTts?.setPitch(1.0f)
+        // 2. Normal Details
+        globalTts?.setPitch(1.0f)
+        if (allergenFound) globalTts?.speak(intro, TextToSpeech.QUEUE_ADD, null, "intro_delayed") 
+        
         globalTts?.speak(ratingMsg, TextToSpeech.QUEUE_ADD, null, "rating")
-        
-        globalTts?.setPitch(1.0f)
         globalTts?.speak(expireMsg, TextToSpeech.QUEUE_ADD, null, "expires")
         
-        if (!allergenMsg.contains("No allergens", true)) globalTts?.setPitch(1.5f) else globalTts?.setPitch(1.0f)
-        globalTts?.speak(allergenMsg, TextToSpeech.QUEUE_ADD, null, "allergens")
+        if (!allergenFound) globalTts?.speak(allergenMsg, TextToSpeech.QUEUE_ADD, null, "no_allergens")
         
         globalTts?.setPitch(1.0f)
     }

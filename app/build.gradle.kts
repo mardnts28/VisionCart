@@ -1,8 +1,11 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     id("com.google.gms.google-services")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -20,7 +23,12 @@ android {
         
         buildConfigField("String", "OFF_USER_AGENT", "\"VisionCart - Android - Version 1.0\"")
         
-        val geminiKey = project.findProperty("GEMINI_API_KEY") ?: ""
+        val properties = Properties()
+        val propertiesFile = project.rootProject.file("local.properties")
+        if (propertiesFile.exists()) {
+            propertiesFile.inputStream().use { properties.load(it) }
+        }
+        val geminiKey = properties.getProperty("GEMINI_API_KEY") ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
     }
 
@@ -68,6 +76,11 @@ dependencies {
 
     // Gemini AI
     implementation(libs.generativeai)
+
+    // Room Database
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))

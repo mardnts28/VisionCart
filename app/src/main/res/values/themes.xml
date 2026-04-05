@@ -11,4 +11,48 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:fitsSystemWindows">true</item>
     </style>
+    <!-- Default: Yellow on Black -->
+    <style name="Theme.VisionCart.YellowBlack" parent="Theme.VisionCart">
+        <item name="appBackgroundColor">@color/bg_dark</item>
+        <item name="appCardColor">@color/bg_card</item>
+        <item name="appPrimaryColor">@color/yellow_primary</item>
+        <item name="appSecondaryColor">@color/yellow_dark</item>
+        <item name="appTextColor">@color/text_white</item>
+        <item name="appTextSecondary">@color/text_gray</item>
+        <item name="appNavColor">@color/nav_bg</item>
+    </style>
+
+    <!-- White on Dark Blue -->
+    <style name="Theme.VisionCart.WhiteBlue" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/text_white</item>
+        <item name="colorPrimaryVariant">#DFDFEF</item>
+        <item name="colorOnPrimary">#1A237E</item>
+        <item name="android:windowBackground">#1A237E</item>
+        <item name="android:statusBarColor">#1A237E</item>
+        <item name="android:navigationBarColor">#121854</item>
+        <item name="appBackgroundColor">#1A237E</item>
+        <item name="appCardColor">#283593</item>
+        <item name="appPrimaryColor">@color/text_white</item>
+        <item name="appSecondaryColor">#E8EAF6</item>
+        <item name="appTextColor">@color/text_white</item>
+        <item name="appTextSecondary">#C5CAE9</item>
+        <item name="appNavColor">#121854</item>
+    </style>
+
+    <!-- Black on White -->
+    <style name="Theme.VisionCart.BlackWhite" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryVariant">#333333</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:navigationBarColor">#EEEEEE</item>
+        <item name="appBackgroundColor">#FFFFFF</item>
+        <item name="appCardColor">#F5F5F5</item>
+        <item name="appPrimaryColor">#000000</item>
+        <item name="appSecondaryColor">#333333</item>
+        <item name="appTextColor">#000000</item>
+        <item name="appTextSecondary">#666666</item>
+        <item name="appNavColor">#EEEEEE</item>
+    </style>
 </resources>
