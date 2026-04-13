@@ -131,12 +131,13 @@ class HistoryActivity : BaseActivity() {
         globalTts?.setPitch(1.0f)
         globalTts?.speak("Expires on $expires", TextToSpeech.QUEUE_ADD, null, "expires")
 
-        val allergenText = if (allergens.lowercase().contains("none")) {
+        val cleanAllergens = product.allergens?.replace(Regex("(?i)en[:;]\\s*"), "")?.trim() ?: "None"
+        val allergenText = if (cleanAllergens.lowercase().contains("none")) {
             "No allergens detected"
         } else {
-            "ATTENTION: Allergen Warning. This product contains: $allergens. Please be careful."
+            "ATTENTION: Allergen Warning. This product contains: $cleanAllergens. Please be careful."
         }
-        val hasAllergens = !allergens.lowercase().contains("none")
+        val hasAllergens = !cleanAllergens.lowercase().contains("none")
         globalTts?.setPitch(if (hasAllergens) 1.6f else 1.0f)
         globalTts?.speak(allergenText, TextToSpeech.QUEUE_ADD, null, "allergens")
     }

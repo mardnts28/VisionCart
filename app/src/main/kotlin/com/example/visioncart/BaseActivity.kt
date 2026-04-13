@@ -270,9 +270,21 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 globalTts?.stop()
                 hideVoiceOverlay()
             }
+            clean.contains("ask gemini") || clean.contains("question") -> {
+                val q = clean.replace("ask gemini", "").replace("question", "").replace("go to", "").trim()
+                handleGeminiVoiceCommand(q)
+            }
             else -> {
                 speak("I heard $command. You can say scan, history, or change theme.")
             }
+        }
+    }
+
+    protected open fun handleGeminiVoiceCommand(question: String) {
+        if (this is ProductDetailActivity) {
+            this.prepareGeminiQuestion(question)
+        } else {
+            speak("Please open a product from history or scan one to ask Gemini details.")
         }
     }
 
@@ -284,7 +296,10 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "WhiteBlue" -> "BlackWhite"
             else -> "YellowBlack"
         }
-        prefs.edit().putString("color_scheme", next).apply()
+        prefs.edit()
+            .putString("color_scheme", next)
+            .putBoolean("skip_settings_intro", true)
+            .apply()
         speak("Applying $next theme")
         vibrateSuccess()
         recreate()

@@ -117,7 +117,7 @@ class ProductDetailActivity : BaseActivity() {
         findViewById<TextView>(R.id.tvExpires).text = expires
         findViewById<TextView>(R.id.tvCategory).text = category
         findViewById<TextView>(R.id.tvIngredients).text = ingredients
-        findViewById<TextView>(R.id.tvAllergens).text = allergens
+        findViewById<TextView>(R.id.tvAllergens).text = allergens?.replace(Regex("(?i)en[:;]\\s*"), "")?.trim() ?: "None"
         findViewById<TextView>(R.id.tvHealthRating)?.text = healthRating
         findViewById<TextView>(R.id.tvWeight)?.text = weight
         findViewById<TextView>(R.id.tvBarcode)?.text = barcode
@@ -222,7 +222,29 @@ class ProductDetailActivity : BaseActivity() {
             clean.contains("ingredients") -> speak("Ingredients for $name are: $ingredients")
             clean.contains("calories") -> speak("Checking nutrition...") 
             clean.contains("star") || clean.contains("save") -> toggleStar()
+            clean.contains("ask gemini") || clean.contains("question") -> {
+                val q = clean.replace("ask gemini", "").replace("question", "").replace("go to", "").trim()
+                prepareGeminiQuestion(q)
+            }
             else -> super.handleGlobalVoiceCommand(command)
+        }
+    }
+
+    fun prepareGeminiQuestion(question: String) {
+        val etQuestion = findViewById<EditText>(R.id.etQuestion)
+        if (question.isNotEmpty()) {
+            etQuestion.setText(question)
+            performAiQA()
+        } else {
+            // Scroll to the question section and focus it
+            val scrollView = findViewById<View>(R.id.detailScrollView)
+            scrollView.post {
+                scrollView.scrollTo(0, etQuestion.bottom)
+            }
+            etQuestion.requestFocus()
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(etQuestion, InputMethodManager.SHOW_IMPLICIT)
+            speak("I'm ready. What would you like to know about this product?")
         }
     }
 
@@ -231,8 +253,9 @@ class ProductDetailActivity : BaseActivity() {
         val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
         if (!prefs.getBoolean("voice_enabled", true)) return
 
-        val allergenFound = allergens != null && !allergens!!.lowercase().contains("none")
-        val allergenMsg = if (allergenFound) "ATTENTION: Allergen Warning. This product contains: $allergens. Please be very careful." else "No allergens detected."
+        val cleanAllergens = allergens?.replace(Regex("(?i)en[:;]\\s*"), "")?.trim()
+        val allergenFound = cleanAllergens != null && !cleanAllergens.lowercase().contains("none")
+        val allergenMsg = if (allergenFound) "ATTENTION: Allergen Warning. This product contains: $cleanAllergens. Please be very careful." else "No allergens detected."
         
         // Truncate long numeric values for speech (display stays full)
         val spokenName = truncateNumbersForSpeech(name ?: "")

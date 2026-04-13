@@ -57,7 +57,7 @@ class FoodRepository {
                         barcode = barcode.trim(), 
                         category = p.categories?.split(",")?.firstOrNull() ?: "General",
                         ingredients = p.ingredientsText ?: "No ingredients listed",
-                        allergens = p.allergens ?: "None listed",
+                        allergens = p.allergens?.replace(Regex("(?i)en[:;]\\s*"), "")?.trim() ?: "None listed",
                         healthRating = detailedRating
                     )
                 } else null

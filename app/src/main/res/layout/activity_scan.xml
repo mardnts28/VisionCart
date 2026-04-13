@@ -176,11 +176,11 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="450dp"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_scanner_box"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="16dp">
 
                     <androidx.camera.view.PreviewView

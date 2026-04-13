@@ -26,7 +26,13 @@ class SettingsActivity : BaseActivity() {
     private lateinit var btnFontExtraLarge: TextView
 
     override fun onTtsReady() {
-        speak("Accessibility Settings Screen. Adjust speech rate, vibration, font size, or color scheme here.")
+        val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("skip_settings_intro", false)) {
+            // Already announced or just recreation; clear the flag
+            prefs.edit().putBoolean("skip_settings_intro", false).apply()
+        } else {
+            speak("Accessibility Settings Screen. Adjust speech rate, vibration, font size, or color scheme here.")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,9 +114,12 @@ class SettingsActivity : BaseActivity() {
 
     private fun saveTheme(theme: String) {
         val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
-        prefs.edit().putString("color_scheme", theme).apply()
+        prefs.edit()
+            .putString("color_scheme", theme)
+            .putBoolean("skip_settings_intro", true)
+            .apply()
         
-        speak("Color scheme changed to $theme")
+        speak("$theme theme applied")
         com.example.visioncart.util.VibrationUtil.vibrateClick(this)
         
         // Recreate to apply the new theme immediately
@@ -125,8 +134,18 @@ class SettingsActivity : BaseActivity() {
 
     private fun saveFontSize(size: String) {
         getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
-            .edit().putString("font_size", size).apply()
-        speak("Font size changed to $size")
+            .edit()
+            .putString("font_size", size)
+            .putBoolean("skip_settings_intro", true)
+            .apply()
+
+        val text = when(size) {
+            "Normal" -> "Normal font"
+            "Large" -> "Large font"
+            "ExtraLarge" -> "Extra Large font"
+            else -> "$size font"
+        }
+        speak(text)
         com.example.visioncart.util.VibrationUtil.vibrateClick(this)
         recreate()
     }
