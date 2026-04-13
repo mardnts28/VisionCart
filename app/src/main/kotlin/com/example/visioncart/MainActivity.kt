@@ -3,6 +3,7 @@ package com.example.visioncart
 import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import com.example.visioncart.R
 
 class MainActivity : BaseActivity() {
@@ -132,10 +133,13 @@ class MainActivity : BaseActivity() {
             voiceAssistantCard.visibility = android.view.View.GONE
         }
         
-        // Show transcribed text in the voice assistant card
+        // Show transcribed text in the voice assistant card and search bar
+        val tvSearchPlaceholder = findViewById<android.widget.TextView>(R.id.tvSearchPlaceholder)
         onVoiceResultListener = { text ->
             runOnUiThread {
                 tvUserSpeech.text = text
+                tvSearchPlaceholder.text = text
+                tvSearchPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.yellow_primary))
             }
         }
     }

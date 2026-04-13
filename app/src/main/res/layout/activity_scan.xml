@@ -167,30 +167,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ─────────────────────────────── -->
-            <!--       CAMERA VIEWFINDER BOX     -->
-            <!-- ─────────────────────────────── -->
-            <!-- Centered container: about half screen width -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="16dp">
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="280dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_scanner_box"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp">
-
-                    <!-- Wrap layout_weight trick: use a LinearLayout parent that is match_parent -->
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <!-- Actual scanner box constrained to ~half screen by using a FrameLayout with maxWidth -->
+            <!-- Actual scanner box -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,11 +176,11 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="260dp"
+                    android:layout_height="350dp"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_scanner_box"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginEnd="40dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_marginBottom="16dp">
 
                     <androidx.camera.view.PreviewView

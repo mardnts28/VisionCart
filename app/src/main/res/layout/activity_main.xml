@@ -34,39 +34,17 @@
 
                     <FrameLayout
                         android:id="@+id/logoContainer"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:background="@drawable/bg_yellow_rounded"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:clickable="true"
                         android:focusable="true">
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:layout_gravity="center"
                             android:src="?attr/appLogo"/>
                     </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_gravity="center_vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="VISION CART"
-                            android:textColor="?attr/appPrimaryColor"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Smart Grocery Assistant"
-                            android:textColor="?attr/appTextSecondary"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
                 </LinearLayout>
 
             </RelativeLayout>

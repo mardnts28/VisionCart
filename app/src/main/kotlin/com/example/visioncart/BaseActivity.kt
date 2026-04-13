@@ -9,6 +9,8 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,7 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening = false
     private var isWaitingForCommand = false
+    private var toneGenerator: ToneGenerator? = null
     
     // Voice Assistant Overlay Views
     private var voiceSearchOverlay: View? = null
@@ -53,6 +56,7 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         globalTts = TextToSpeech(this, this)
         setupTtsListener()
+        toneGenerator = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -132,6 +136,7 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 override fun onReadyForSpeech(params: Bundle?) { 
                     isListening = true 
                     if (isWaitingForCommand) {
+                        toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
                         showVoiceOverlay("Listening...", "Say a command")
                     }
                 }
@@ -162,7 +167,10 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     if (!matches.isNullOrEmpty()) {
                         val result = matches[0].lowercase()
                         if (isWaitingForCommand) {
-                            tvVoiceCommand?.text = result
+                            toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                            runOnUiThread {
+                                tvVoiceCommand?.text = result
+                            }
                             onVoiceResultListener?.invoke(result)
                             handleGlobalVoiceCommand(result)
                             isWaitingForCommand = false
@@ -189,7 +197,9 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     if (!matches.isNullOrEmpty()) {
                         val partial = matches[0]
                         if (isWaitingForCommand) {
-                            tvVoiceCommand?.text = partial
+                            runOnUiThread {
+                                tvVoiceCommand?.text = partial
+                            }
                         }
                         onVoiceResultListener?.invoke(partial)
                     }
@@ -357,6 +367,7 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         globalTts?.stop()
         globalTts?.shutdown()
         speechRecognizer?.destroy()
+        toneGenerator?.release()
         super.onDestroy()
     }
 }
