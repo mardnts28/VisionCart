@@ -329,6 +329,10 @@ class ScanActivity : BaseActivity() {
                 val brand = parts.getOrNull(0)?.trim() ?: "Unknown"
                 val name = parts.getOrNull(1)?.trim() ?: "Product"
                 val weight = parts.getOrNull(2)?.trim() ?: "N/A"
+                val category = parts.getOrNull(3)?.trim() ?: "AI Identification"
+                val ingredients = parts.getOrNull(4)?.trim() ?: "Check label for safety"
+                val allergens = parts.getOrNull(5)?.trim() ?: "Caution: Check label"
+                val healthRating = parts.getOrNull(6)?.trim() ?: "Moderate"
                 
                 val product = ScannedProduct(
                     brand = brand,
@@ -338,10 +342,10 @@ class ScanActivity : BaseActivity() {
                     expires = "N/A",
                     weight = weight,
                     barcode = "AI-DETECTED",
-                    category = "AI Identification",
-                    ingredients = "Not available via AI",
-                    allergens = "Caution: Use with care",
-                    healthRating = "AI Analysis"
+                    category = category,
+                    ingredients = ingredients,
+                    allergens = allergens,
+                    healthRating = healthRating
                 )
                 
                 // NEW: PERSISTENT SAVE

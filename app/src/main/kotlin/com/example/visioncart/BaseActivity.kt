@@ -59,6 +59,7 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) return
 
         if (SpeechRecognizer.isRecognitionAvailable(this)) {
+            speechRecognizer?.destroy()
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -70,12 +71,24 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 override fun onBeginningOfSpeech() {}
                 override fun onRmsChanged(rmsdB: Float) {}
                 override fun onBufferReceived(buffer: ByteArray?) {}
-                override fun onEndOfSpeech() { isListening = false }
-                override fun onError(error: Int) { isListening = false }
+                override fun onEndOfSpeech() { 
+                    isListening = false
+                    // Restart for wake word
+                    setupGlobalSpeechRecognizer()
+                }
+                override fun onError(error: Int) { 
+                    isListening = false
+                    // Restart for wake word unless it's a critical error
+                    if (error != SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
+                        setupGlobalSpeechRecognizer()
+                    }
+                }
                 override fun onResults(results: Bundle?) {
                     val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     if (!matches.isNullOrEmpty()) {
                         handleGlobalVoiceCommand(matches[0].lowercase())
+                    } else {
+                        setupGlobalSpeechRecognizer()
                     }
                 }
                 override fun onPartialResults(partialResults: Bundle?) {}
@@ -85,21 +98,50 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        globalTts?.stop()
+    }
+
     open fun handleGlobalVoiceCommand(command: String) {
+        val lowerCommand = command.lowercase()
+        
+        // 1. Check for wake word "VisionCart"
+        if (lowerCommand.contains("vision cart") || lowerCommand.contains("visioncart")) {
+            vibrate(100)
+            
+            // Extract the action (everything after the wake word)
+            val action = lowerCommand
+                .replace("vision cart", "")
+                .replace("visioncart", "")
+                .trim()
+            
+            if (action.isEmpty()) {
+                // Just the wake word was said
+                speak("Yes? I am listening. Say scan, history, or settings.")
+            } else {
+                // Wake word + command was said in one go
+                processCommand(action)
+            }
+        }
+        
+        // ALWAYS restart listening for the next wake word
+        setupGlobalSpeechRecognizer()
+    }
+
+    private fun processCommand(command: String) {
         when {
             command.contains("scan") -> startActivity(Intent(this, ScanActivity::class.java))
-            command.contains("home") -> {
+            command.contains("home") || command.contains("dashboard") -> {
                 if (this !is MainActivity) {
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
             }
-            command.contains("history") -> startActivity(Intent(this, HistoryActivity::class.java))
+            command.contains("history") || command.contains("list") -> startActivity(Intent(this, HistoryActivity::class.java))
             command.contains("settings") -> startActivity(Intent(this, SettingsActivity::class.java))
-            command.contains("stop") || command.contains("silence") -> globalTts?.stop()
+            command.contains("stop") || command.contains("silence") || command.contains("quiet") -> globalTts?.stop()
         }
-        // Restart listening
-        setupGlobalSpeechRecognizer()
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

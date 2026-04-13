@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity(tableName = "scanned_products")
 data class ScannedProduct(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var brand: String?,
     var name: String?,
     var price: String?,

@@ -41,11 +41,13 @@ class GeminiService {
                 val response = generativeModel.generateContent(
                     content {
                         image(bitmap)
-                        text("You are identifying a product for a blind user from a camera frame. Look at the product and tell me the Brand, Name and approximate weight (ml or g). Format as 'Brand | Name | Weight'. If it's a bit blurry, give your best guess based on colors and logos. Reply 'Unknown' only if absolutely nothing is visible.")
+                        text("You are identifying a product for a blind user. Scan the image carefully. Identify the following details: Brand, Product Name, Weight, Category, Ingredients, Allergens, and a Health Rating (Healthy, Moderate, or Unhealthy). " + 
+                             "Format the output EXACTLY as: Brand | Name | Weight | Category | Ingredients | Allergens | HealthRating. " +
+                             "If some info is not visible, use 'N/A'. Be as accurate as possible. If it's blurry, make your best professional guess based on logos and colors.")
                     }
                 )
                 val text = response.text?.trim()
-                if (text?.contains("Unknown", ignoreCase = true) == true) null else text
+                if (text == null || text.contains("Unknown", ignoreCase = true) || !text.contains("|")) null else text
             } catch (e: Exception) {
                 null
             }

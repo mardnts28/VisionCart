@@ -118,7 +118,11 @@ class ProductDetailActivity : BaseActivity() {
     private fun updateStarUI() {
         val ivStar = findViewById<ImageView>(R.id.ivStar)
         ivStar.alpha = if (isStarred) 1.0f else 0.4f
-        ivStar.setColorFilter(if (isStarred) ContextCompat.getColor(this, R.color.yellow_primary) else ContextCompat.getColor(this, R.color.text_gray))
+        
+        val colorAttr = if (isStarred) R.attr.appPrimaryColor else R.attr.appTextSecondary
+        val typedValue = android.util.TypedValue()
+        theme.resolveAttribute(colorAttr, typedValue, true)
+        ivStar.setColorFilter(typedValue.data)
     }
 
     private fun toggleStar() {
