@@ -24,7 +24,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="8dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
                         android:id="@+id/logoContainer"
                         android:layout_width="42dp"
                         android:layout_height="42dp"
-                        android:background="?attr/appPrimaryColor"
+                        android:background="@drawable/bg_yellow_rounded"
                         android:layout_marginEnd="10dp"
                         android:clickable="true"
                         android:focusable="true">
@@ -58,7 +58,7 @@
                             android:layout_height="wrap_content"
                             android:text="VISION CART"
                             android:textColor="?attr/appPrimaryColor"
-                            android:textSize="14sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:letterSpacing="0.1"/>
                         <TextView
@@ -66,28 +66,62 @@
                             android:layout_height="wrap_content"
                             android:text="Smart Grocery Assistant"
                             android:textColor="?attr/appTextSecondary"
-                            android:textSize="11sp"/>
+                            android:textSize="12sp"/>
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Mic Button -->
+            </RelativeLayout>
+
+            <!--         SEARCH BAR SECTION (Voice Trigger)     -->
+            <RelativeLayout
+                android:id="@+id/searchContainer"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_search_input"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:elevation="4dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/icSearch"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:src="@android:drawable/ic_menu_search"
+                    android:tint="?attr/appTextSecondary"
+                    android:alpha="0.6"/>
+
+                <TextView
+                    android:id="@+id/tvSearchPlaceholder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/icSearch"
+                    android:layout_toStartOf="@+id/btnVoiceSearch"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Tap to use Voice Assistant..."
+                    android:textColor="?attr/appTextSecondary"
+                    android:textSize="14sp" />
+
                 <FrameLayout
-                    android:id="@+id/btnMic"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:id="@+id/btnVoiceSearch"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/bg_dark_rounded"
                     android:clickable="true"
                     android:focusable="true">
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_mic"
-                        android:tint="?attr/appTextColor"/>
+                        android:tint="?attr/appPrimaryColor"/>
                 </FrameLayout>
-
             </RelativeLayout>
 
 
@@ -133,7 +167,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text='Tap "Scan Product" to identify any grocery item instantly.'
+                        android:text='Tap the search bar or say "VisionCart Scan" to start.'
                         android:textColor="?attr/appTextSecondary"
                         android:textSize="12sp"/>
                 </LinearLayout>
@@ -448,7 +482,7 @@
     </ScrollView>
 
 
-    <!-- VOICE ASSISTANT CARD  -->
+    <!-- VOICE ASSISTANT MINICARD  -->
     <RelativeLayout
         android:id="@+id/voiceAssistantCard"
         android:layout_width="match_parent"
@@ -462,7 +496,6 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone">
 
-        <!-- Speaker icon with yellow background -->
         <FrameLayout
             android:id="@+id/voiceIcon"
             android:layout_width="38dp"
@@ -476,8 +509,6 @@
                 android:src="@drawable/ic_volume"
                 android:tint="?attr/appPrimaryColor"/>
         </FrameLayout>
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -496,12 +527,15 @@
                 android:letterSpacing="0.1"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/tvUserSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Voice assistant is active and ready to help."
+                android:text="Active. Say 'VisionCart Scan' anytime."
                 android:textColor="?attr/appTextColor"
                 android:textSize="13sp"
-                android:layout_marginTop="2dp"/>
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="2"/>
         </LinearLayout>
 
         <TextView
@@ -538,25 +572,18 @@
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
-            <FrameLayout
-                android:layout_width="44dp"
-                android:layout_height="34dp"
-                android:background="@drawable/bg_nav_active">
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_home"
-                    android:tint="?attr/appBackgroundColor"/>
-            </FrameLayout>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_home"
+                android:tint="?attr/appPrimaryColor"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Home"
                 android:textColor="?attr/appPrimaryColor"
                 android:textSize="10sp"
-                android:textStyle="bold"
-                android:layout_marginTop="2dp"/>
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <LinearLayout
@@ -572,14 +599,13 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_scan"
-                android:tint="?attr/appPrimaryColor"/>
+                android:tint="@color/text_gray"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Scan"
-                android:textColor="?attr/appPrimaryColor"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
+                android:textColor="@color/text_gray"
+                android:textSize="10sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -595,12 +621,12 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_history"
-                android:tint="?attr/appTextSecondary"/>
+                android:tint="@color/text_gray"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="History"
-                android:textColor="?attr/appTextSecondary"
+                android:textColor="@color/text_gray"
                 android:textSize="10sp"/>
         </LinearLayout>
 
@@ -617,15 +643,18 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_settings"
-                android:tint="?attr/appTextSecondary"/>
+                android:tint="@color/text_gray"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Settings"
-                android:textColor="?attr/appTextSecondary"
+                android:textColor="@color/text_gray"
                 android:textSize="10sp"/>
         </LinearLayout>
 
     </LinearLayout>
+
+    <!-- Global Voice Assistant Overlay (Include) -->
+    <include layout="@layout/layout_voice_assistant" />
 
 </RelativeLayout>

@@ -3,7 +3,6 @@ package com.example.visioncart
 import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 import com.example.visioncart.R
 
 class MainActivity : BaseActivity() {
@@ -22,6 +21,20 @@ class MainActivity : BaseActivity() {
             vibrate(30)
             speak("Welcome to Vision Cart.")
         }
+
+        // Search Bar Section (Voice Assistant Trigger)
+        val searchContainer = findViewById<android.view.View>(R.id.searchContainer)
+        val btnVoiceSearch = findViewById<android.view.View>(R.id.btnVoiceSearch)
+        
+        searchContainer.setOnClickListener {
+            vibrate(30)
+            startListeningForCommand()
+        }
+        btnVoiceSearch.setOnClickListener {
+            vibrate(30)
+            startListeningForCommand()
+        }
+        setVocalButton(searchContainer, "Voice Search - Tap to say a command like scan or change theme")
 
         // Main Action Buttons
         val btnScan = findViewById<LinearLayout>(R.id.btnScanProduct)
@@ -54,24 +67,10 @@ class MainActivity : BaseActivity() {
             speak("Welcome to Vision Cart Home. Select Scan, History, or Accessibility.")
         }
 
-        // Mic Button Toggle
-        val btnMic = findViewById<android.widget.FrameLayout>(R.id.btnMic)
-        updateMicUI(btnMic)
-        btnMic.setOnClickListener {
-            val prefs = getSharedPreferences("VisionCartPrefs", android.content.Context.MODE_PRIVATE)
-            val currentState = prefs.getBoolean("voice_enabled", true)
-            prefs.edit().putBoolean("voice_enabled", !currentState).apply()
-            
-            vibrate(50)
-            updateMicUI(btnMic)
-            
-            if (!currentState) {
-                speak("Voice enabled")
-            } else {
-                globalTts?.stop()
-            }
-        }
-        setVocalButton(btnMic, "Toggle automatic speech")
+        // Voice Card Close
+        val btnCloseVoice = findViewById<android.widget.TextView>(R.id.btnCloseVoice)
+        val voiceAssistantCard = findViewById<android.widget.RelativeLayout>(R.id.voiceAssistantCard)
+        val tvUserSpeech = findViewById<android.widget.TextView>(R.id.tvUserSpeech)
 
         // Quick Guides
         val guide1 = findViewById<android.view.View>(R.id.guidePointCamera)
@@ -127,34 +126,19 @@ class MainActivity : BaseActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        // Voice Card Close
-        val btnCloseVoice = findViewById<android.widget.TextView>(R.id.btnCloseVoice)
-        val voiceAssistantCard = findViewById<android.widget.RelativeLayout>(R.id.voiceAssistantCard)
+        // Voice Card Close + speech display
         btnCloseVoice.setOnClickListener {
             vibrate(30)
             voiceAssistantCard.visibility = android.view.View.GONE
         }
-    }
-
-    private fun updateMicUI(btnMic: android.widget.FrameLayout) {
-        val prefs = getSharedPreferences("VisionCartPrefs", android.content.Context.MODE_PRIVATE)
-        val isEnabled = prefs.getBoolean("voice_enabled", true)
-        // Find the mic icon as the first child of the FrameLayout
-        val micIcon = btnMic.getChildAt(0) as? android.widget.ImageView
         
-        val voiceAssistantCard = findViewById<android.widget.RelativeLayout>(R.id.voiceAssistantCard)
-        
-        if (isEnabled) {
-            btnMic.setBackgroundResource(R.drawable.bg_dark_rounded)
-            micIcon?.setImageResource(R.drawable.ic_mic)
-            micIcon?.setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.text_white))
-            voiceAssistantCard.visibility = android.view.View.VISIBLE
-        } else {
-            btnMic.setBackgroundResource(R.drawable.bg_yellow_rounded)
-            micIcon?.setImageResource(R.drawable.ic_mic_off)
-            micIcon?.setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.bg_dark))
-            voiceAssistantCard.visibility = android.view.View.GONE
+        // Show transcribed text in the voice assistant card
+        onVoiceResultListener = { text ->
+            runOnUiThread {
+                tvUserSpeech.text = text
+            }
         }
     }
+
 }
 

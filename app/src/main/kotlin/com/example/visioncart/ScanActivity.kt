@@ -129,6 +129,13 @@ class ScanActivity : BaseActivity() {
         findViewById<LinearLayout>(R.id.navHistory).setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
+
+        // Auto-scan if launched via voice command "scan now"
+        if (intent.getBooleanExtra("auto_scan", false)) {
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                if (!isScanning) checkCameraPermission()
+            }, 500)
+        }
     }
 
     private fun checkCameraPermission() {
@@ -241,10 +248,11 @@ class ScanActivity : BaseActivity() {
         vibrateSuccess()
 
         runOnUiThread {
-
+            val truncatedBarcode = truncateNumbersForSpeech(barcode)
             tvDetecting?.text = "Detected: $barcode"
             voiceAssistantCard?.let { showFadeIn(it) }
             tvInfoCard?.text = "Barcode found! Fetching data..."
+            speak("Barcode detected: $truncatedBarcode")
         }
 
         lifecycleScope.launch {
@@ -385,6 +393,16 @@ class ScanActivity : BaseActivity() {
         val fade = AlphaAnimation(0f, 1f)
         fade.duration = 300
         view.startAnimation(fade)
+    }
+
+    /**
+     * Truncates any numeric sequence longer than 4 digits to just the first 4 digits.
+     * This prevents TTS from reading long barcodes/numbers digit-by-digit endlessly.
+     */
+    private fun truncateNumbersForSpeech(input: String): String {
+        return input.replace(Regex("\\d{5,}")) { match ->
+            match.value.take(4)
+        }
     }
 
     override fun onDestroy() {

@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 
 class HistoryActivity : BaseActivity() {
 
-
     private val database by lazy { AppDatabase.getDatabase(this) }
 
     private var emptyState: LinearLayout? = null
@@ -27,7 +26,6 @@ class HistoryActivity : BaseActivity() {
     private var tvItemCount: TextView? = null
     private var btnClear: LinearLayout? = null
     
-
     override fun onTtsReady() {
         lifecycleScope.launch {
             val count = database.productDao().getAllProducts().first().size
@@ -112,12 +110,6 @@ class HistoryActivity : BaseActivity() {
         }
     }
 
-    override fun onInit(status: Int) {
-        super.onInit(status)
-    }
-
-
-
     private fun speakStructured(text: String, isWarning: Boolean = false) {
         globalTts?.setPitch(if (isWarning) 1.5f else 1.0f)
         globalTts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "structured_audio")
@@ -149,16 +141,9 @@ class HistoryActivity : BaseActivity() {
         globalTts?.speak(allergenText, TextToSpeech.QUEUE_ADD, null, "allergens")
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        // Database observation handles refresh automatically via collect
-    }
-
     private fun refreshUI(list: List<ScannedProduct>) {
         val filteredList = if (isShoppingListActive) list.filter { it.isStarred } else list
         
-        // 1. Header Logic: Toggle only shows if we have products in DB
         if (list.isEmpty()) {
             btnToggleList?.visibility = View.GONE
             btnClear?.visibility = View.GONE
@@ -167,7 +152,6 @@ class HistoryActivity : BaseActivity() {
             btnClear?.visibility = View.VISIBLE
         }
 
-        // 2. Content Logic: Deciding between empty state and result list
         if (filteredList.isEmpty()) {
             emptyState?.visibility = View.VISIBLE
             filledState?.visibility = View.GONE
@@ -230,9 +214,5 @@ class HistoryActivity : BaseActivity() {
         }
 
         historyContainer?.addView(item)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

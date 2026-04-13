@@ -170,143 +170,174 @@
             <!-- ─────────────────────────────── -->
             <!--       CAMERA VIEWFINDER BOX     -->
             <!-- ─────────────────────────────── -->
-            <RelativeLayout
+            <!-- Centered container: about half screen width -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="340dp"
-                android:background="@drawable/bg_scanner_box"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:layout_marginBottom="16dp">
 
-                <androidx.camera.view.PreviewView
-                    android:id="@+id/previewView"
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="280dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_scanner_box"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp">
+
+                    <!-- Wrap layout_weight trick: use a LinearLayout parent that is match_parent -->
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <!-- Actual scanner box constrained to ~half screen by using a FrameLayout with maxWidth -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:gravity="center_horizontal">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="2dp"/>
+                    android:layout_height="260dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_scanner_box"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_marginBottom="16dp">
+
+                    <androidx.camera.view.PreviewView
+                        android:id="@+id/previewView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="2dp"/>
 
 
-                <!-- ── IDLE STATE CORNERS (yellow) ── -->
-                <ImageView
-                    android:id="@+id/cornerIdleTL"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_tl"
-                    android:visibility="visible"/>
-
-                <ImageView
-                    android:id="@+id/cornerIdleTR"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_tr"
-                    android:visibility="visible"/>
-
-                <ImageView
-                    android:id="@+id/cornerIdleBL"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_bl"
-                    android:visibility="visible"/>
-
-                <ImageView
-                    android:id="@+id/cornerIdleBR"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_br"
-                    android:visibility="visible"/>
-
-                <!-- ── DETECTING STATE CORNERS (green) ── -->
-                <ImageView
-                    android:id="@+id/cornerGreenTL"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_tl_green"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/cornerGreenTR"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_tr_green"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/cornerGreenBL"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_bl_green"
-                    android:visibility="gone"/>
-
-                <ImageView
-                    android:id="@+id/cornerGreenBR"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="14dp"
-                    android:src="@drawable/ic_corner_br_green"
-                    android:visibility="gone"/>
-
-                <!-- Center idle hint -->
-                <LinearLayout
-                    android:id="@+id/centerIdleHint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:visibility="visible">
+                    <!-- ── IDLE STATE CORNERS (yellow) ── -->
                     <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_scan"
-                        android:tint="#55888899"
-                        android:alpha="0.5"/>
-                    <TextView
+                        android:id="@+id/cornerIdleTL"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_tl"
+                        android:visibility="visible"/>
+
+                    <ImageView
+                        android:id="@+id/cornerIdleTR"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_tr"
+                        android:visibility="visible"/>
+
+                    <ImageView
+                        android:id="@+id/cornerIdleBL"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_bl"
+                        android:visibility="visible"/>
+
+                    <ImageView
+                        android:id="@+id/cornerIdleBR"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_br"
+                        android:visibility="visible"/>
+
+                    <!-- ── DETECTING STATE CORNERS (green) ── -->
+                    <ImageView
+                        android:id="@+id/cornerGreenTL"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_tl_green"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/cornerGreenTR"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_tr_green"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/cornerGreenBL"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_bl_green"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/cornerGreenBR"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="14dp"
+                        android:src="@drawable/ic_corner_br_green"
+                        android:visibility="gone"/>
+
+                    <!-- Center idle hint -->
+                    <LinearLayout
+                        android:id="@+id/centerIdleHint"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Press Scan to begin"
-                        android:textColor="#66AAAAAA"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="visible">
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_scan"
+                            android:tint="#55888899"
+                            android:alpha="0.5"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Press Scan to begin"
+                            android:textColor="#66AAAAAA"
+                            android:textSize="14sp"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Center detecting label -->
+                    <TextView
+                        android:id="@+id/tvDetecting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Detecting barcode..."
+                        android:textColor="?attr/appPrimaryColor"
                         android:textSize="14sp"
-                        android:layout_marginTop="8dp"/>
-                </LinearLayout>
+                        android:background="@drawable/bg_detecting_label"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone"/>
 
-                <!-- Center detecting label -->
-                <TextView
-                    android:id="@+id/tvDetecting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="Detecting barcode..."
-                    android:textColor="?attr/appPrimaryColor"
-                    android:textSize="14sp"
-                    android:background="@drawable/bg_detecting_label"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:visibility="gone"/>
-
-            </RelativeLayout>
+                </RelativeLayout>
+            </FrameLayout>
 
             <!-- ─────────────────────────────── -->
             <!--            INFO CARD            -->

@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.visioncart.api.GeminiService
 import com.example.visioncart.db.AppDatabase
@@ -172,10 +171,11 @@ class ProductDetailActivity : BaseActivity() {
     }
 
     override fun handleGlobalVoiceCommand(command: String) {
+        val clean = command.lowercase().trim()
         when {
-            command.contains("ingredients") -> speak("Ingredients for $name are: $ingredients")
-            command.contains("calories") -> speak("Checking nutrition...") 
-            command.contains("star") || command.contains("save") -> toggleStar()
+            clean.contains("ingredients") -> speak("Ingredients for $name are: $ingredients")
+            clean.contains("calories") -> speak("Checking nutrition...") 
+            clean.contains("star") || clean.contains("save") -> toggleStar()
             else -> super.handleGlobalVoiceCommand(command)
         }
     }
@@ -188,9 +188,15 @@ class ProductDetailActivity : BaseActivity() {
         val allergenFound = allergens != null && !allergens!!.lowercase().contains("none")
         val allergenMsg = if (allergenFound) "ATTENTION: Allergen Warning. This product contains: $allergens. Please be very careful." else "No allergens detected."
         
-        val intro = "Product: $name by $brand. "
+        // Truncate long numeric values for speech (display stays full)
+        val spokenName = truncateNumbersForSpeech(name ?: "")
+        val spokenBrand = truncateNumbersForSpeech(brand ?: "")
+        val spokenExpires = truncateNumbersForSpeech(expires ?: "N/A")
+        val spokenBarcode = truncateNumbersForSpeech(barcode ?: "N/A")
+        
+        val intro = "Product: $spokenName by $spokenBrand. "
         val ratingMsg = "The health rating is $healthRating. "
-        val expireMsg = "This product expires on $expires. "
+        val expireMsg = "This product expires on $spokenExpires. "
 
         // Show card UI
         val card = findViewById<RelativeLayout>(R.id.voiceReadingCard)
@@ -204,21 +210,31 @@ class ProductDetailActivity : BaseActivity() {
         // 1. Safety First: Read allergens with higher pitch if found
         if (allergenFound) {
             globalTts?.setPitch(1.6f)
-            globalTts?.speak(allergenMsg, TextToSpeech.QUEUE_FLUSH, null, "allergens")
+            globalTts?.speak(allergenMsg, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "allergens")
         } else {
             globalTts?.setPitch(1.0f)
-            globalTts?.speak(intro, TextToSpeech.QUEUE_FLUSH, null, "intro")
+            globalTts?.speak(intro, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "intro")
         }
         
         // 2. Normal Details
         globalTts?.setPitch(1.0f)
-        if (allergenFound) globalTts?.speak(intro, TextToSpeech.QUEUE_ADD, null, "intro_delayed") 
+        if (allergenFound) globalTts?.speak(intro, android.speech.tts.TextToSpeech.QUEUE_ADD, null, "intro_delayed") 
         
-        globalTts?.speak(ratingMsg, TextToSpeech.QUEUE_ADD, null, "rating")
-        globalTts?.speak(expireMsg, TextToSpeech.QUEUE_ADD, null, "expires")
+        globalTts?.speak(ratingMsg, android.speech.tts.TextToSpeech.QUEUE_ADD, null, "rating")
+        globalTts?.speak(expireMsg, android.speech.tts.TextToSpeech.QUEUE_ADD, null, "expires")
         
-        if (!allergenFound) globalTts?.speak(allergenMsg, TextToSpeech.QUEUE_ADD, null, "no_allergens")
+        if (!allergenFound) globalTts?.speak(allergenMsg, android.speech.tts.TextToSpeech.QUEUE_ADD, null, "no_allergens")
         
         globalTts?.setPitch(1.0f)
+    }
+
+    /**
+     * Truncates any numeric sequence longer than 4 digits to just the first 4 digits.
+     * Full values are still displayed in the UI; only spoken output is capped.
+     */
+    private fun truncateNumbersForSpeech(input: String): String {
+        return input.replace(Regex("\\d{5,}")) { match ->
+            match.value.take(4)
+        }
     }
 }
