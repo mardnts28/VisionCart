@@ -54,7 +54,9 @@ class GeminiService {
         }
     }
     suspend fun askNutritionalQuestion(question: String, productContext: String): String? {
-        if (BuildConfig.GEMINI_API_KEY.isEmpty()) return "AI is not configured. Please add your Gemini API key."
+        if (BuildConfig.GEMINI_API_KEY.isEmpty()) {
+            return "⚠️ AI Assistant is unavailable at the moment. Please try again later."
+        }
         
         return withContext(Dispatchers.IO) {
             try {
@@ -69,9 +71,10 @@ class GeminiService {
                         )
                     }
                 )
-                response.text?.trim() ?: "I couldn't find an answer."
+                response.text?.trim() ?: "⚠️ AI Assistant is unavailable at the moment. Please try again later."
             } catch (e: Exception) {
-                "Sorry, I couldn't connect to Gemini. Please check your internet connection and API key."
+                e.printStackTrace()
+                "⚠️ AI Assistant is temporarily unavailable. Please check your connection and try again."
             }
         }
     }

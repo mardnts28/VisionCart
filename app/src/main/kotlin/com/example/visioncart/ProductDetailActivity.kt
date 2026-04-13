@@ -198,14 +198,19 @@ class ProductDetailActivity : BaseActivity() {
                 responseCard.visibility = View.VISIBLE
                 tvResponse.text = answer
 
-                // Speak the first 300 chars (brief)
-                val briefAnswer = if (answer.length > 300) answer.take(300) + "…" else answer
-                speak(briefAnswer)
+                // If it's an unavailability message, speak it fully; otherwise brief (300 chars)
+                val isError = answer.startsWith("⚠️")
+                val spokenAnswer = when {
+                    isError -> answer.replace("⚠️", "Warning.")
+                    answer.length > 300 -> answer.take(300) + "…"
+                    else -> answer
+                }
+                speak(spokenAnswer)
 
                 // Speak-answer button
                 btnSpeak.setOnClickListener {
                     vibrate(30)
-                    speak(briefAnswer)
+                    speak(spokenAnswer)
                 }
             }
         }
