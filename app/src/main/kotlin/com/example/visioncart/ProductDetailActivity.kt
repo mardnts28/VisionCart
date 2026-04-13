@@ -4,13 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.app.AlertDialog
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.visioncart.api.GeminiService
@@ -85,6 +87,14 @@ class ProductDetailActivity : BaseActivity() {
             performAiQA()
         }
 
+        // Also trigger on keyboard "Search" / "Done" action
+        findViewById<EditText>(R.id.etQuestion).setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+                performAiQA()
+                true
+            } else false
+        }
+
         // Navigation
         findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
@@ -154,19 +164,50 @@ class ProductDetailActivity : BaseActivity() {
     }
 
     private fun performAiQA() {
-        val question = findViewById<EditText>(R.id.etQuestion).text.toString()
-        if (question.isEmpty()) return
+        val etQuestion = findViewById<EditText>(R.id.etQuestion)
+        val question = etQuestion.text.toString().trim()
+        if (question.isEmpty()) {
+            speak("Please type a question first.")
+            return
+        }
 
-        val tvResponse = findViewById<TextView>(R.id.tvAiResponse)
-        tvResponse.text = "Gemini is thinking..."
+        // Hide keyboard
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(etQuestion.windowToken, 0)
+
+        val loadingRow  = findViewById<LinearLayout>(R.id.geminiLoadingRow)
+        val responseCard = findViewById<LinearLayout>(R.id.geminiResponseCard)
+        val tvResponse  = findViewById<TextView>(R.id.tvAiResponse)
+        val btnSpeak    = findViewById<ImageView>(R.id.btnSpeakAnswer)
+
+        // Show loading, hide old result
+        loadingRow.visibility  = View.VISIBLE
+        responseCard.visibility = View.GONE
+
         speak("Asking Gemini...")
 
-        val productContext = "Brand: $brand, Name: $name, Ingredients: $ingredients, Allergens: $allergens, Category: $category"
-        
+        val productContext = "Brand: $brand, Name: $name, Weight: $weight, Category: $category, " +
+                "Ingredients: $ingredients, Allergens: $allergens, Health Rating: $healthRating"
+
         lifecycleScope.launch {
             val answer = geminiService.askNutritionalQuestion(question, productContext)
-            tvResponse.text = answer ?: "I couldn't find an answer."
-            speak(answer)
+                ?: "Sorry, I couldn't get an answer. Please check your internet connection."
+
+            runOnUiThread {
+                loadingRow.visibility   = View.GONE
+                responseCard.visibility = View.VISIBLE
+                tvResponse.text = answer
+
+                // Speak the first 300 chars (brief)
+                val briefAnswer = if (answer.length > 300) answer.take(300) + "…" else answer
+                speak(briefAnswer)
+
+                // Speak-answer button
+                btnSpeak.setOnClickListener {
+                    vibrate(30)
+                    speak(briefAnswer)
+                }
+            }
         }
     }
 

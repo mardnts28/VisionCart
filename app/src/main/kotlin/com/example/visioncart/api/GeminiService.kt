@@ -54,18 +54,24 @@ class GeminiService {
         }
     }
     suspend fun askNutritionalQuestion(question: String, productContext: String): String? {
-        if (BuildConfig.GEMINI_API_KEY.isEmpty()) return "AI is not configured."
+        if (BuildConfig.GEMINI_API_KEY.isEmpty()) return "AI is not configured. Please add your Gemini API key."
         
         return withContext(Dispatchers.IO) {
             try {
                 val response = generativeModel.generateContent(
                     content {
-                        text("You are a helpful shopping assistant for a blind person. Based on this product data: [$productContext], answer the user's question: [$question]. Be concise and clear. Focus on safety and ingredients.")
+                        text(
+                            "You are a concise shopping assistant for a visually impaired person. " +
+                            "Product info: [$productContext]. " +
+                            "User question: [$question]. " +
+                            "Answer in 2-3 short sentences maximum. Be direct, clear, and focus on safety. " +
+                            "Start your answer immediately without repeating the question."
+                        )
                     }
                 )
                 response.text?.trim() ?: "I couldn't find an answer."
             } catch (e: Exception) {
-                "Sorry, I encountered an error answering that."
+                "Sorry, I couldn't connect to Gemini. Please check your internet connection and API key."
             }
         }
     }
