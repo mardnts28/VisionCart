@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/voiceSearchOverlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EE000000"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:visibility="gone"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="100dp">
+
+    <TextView
+        android:id="@+id/tvVoiceStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Listening..."
+        android:textColor="?attr/appPrimaryColor"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"/>
+
+    <FrameLayout
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:background="@drawable/bg_circle_dark">
+        
+        <ImageView
+            android:id="@+id/ivVoiceWave"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_mic"
+            android:tint="?attr/appPrimaryColor"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvVoiceCommand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Say 'VisionCart' followed by a command"
+        android:textColor="?attr/appTextColor"
+        android:textSize="18sp"
+        android:layout_marginTop="30dp"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/btnCancelVoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CLOSE"
+        android:textColor="?attr/appPrimaryColor"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:padding="16dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>
