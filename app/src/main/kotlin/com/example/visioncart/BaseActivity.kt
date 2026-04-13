@@ -361,13 +361,14 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     open fun onTtsReady() {}
 
-    fun speak(text: String?, waitForCommand: Boolean = false, utteranceId: String = "global_audio") {
+    fun speak(text: String?, waitForCommand: Boolean = false, utteranceId: String = "global_audio", pan: Float = 0.0f) {
         val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
         if (!prefs.getBoolean("voice_enabled", true)) return
         
         if (isTtsReady && text != null) {
             val params = Bundle()
             params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId)
+            params.putFloat(TextToSpeech.Engine.KEY_PARAM_PAN, pan)
             globalTts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, utteranceId)
         }
     }

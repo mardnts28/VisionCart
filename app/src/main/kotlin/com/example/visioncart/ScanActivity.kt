@@ -64,6 +64,7 @@ class ScanActivity : BaseActivity() {
     // AI Fallback stuff
     private var fallbackJob: kotlinx.coroutines.Job? = null
     private var latestBitmap: Bitmap? = null
+    private var lastHintTime = 0L
 
     // Views
     private var previewView: PreviewView? = null
@@ -230,6 +231,7 @@ class ScanActivity : BaseActivity() {
                     latestBitmap = imageProxy.toBitmap()
                     
                     if (barcodes.isNotEmpty() && !isProcessing) {
+                        provideAlignmentHints(barcodes[0], imageProxy.width, imageProxy.height)
                         fallbackJob?.cancel() // Cancel AI fallback
                         val currentBitmap = latestBitmap
                         onBarcodeDetected(barcodes[0].displayValue ?: "", currentBitmap)
@@ -301,6 +303,40 @@ class ScanActivity : BaseActivity() {
                     tvDetecting?.text = "Detecting barcode..."
                 }
             }
+        }
+    }
+
+    private fun provideAlignmentHints(barcode: com.google.mlkit.vision.barcode.common.Barcode, width: Int, height: Int) {
+        val now = System.currentTimeMillis()
+        if (now - lastHintTime < 1500) return // Throttle
+        
+        val box = barcode.boundingBox ?: return
+        val centerX = width / 2
+        val centerY = height / 2
+        
+        val dx = box.centerX() - centerX
+        val dy = box.centerY() - centerY
+        
+        val thresholdX = width * 0.15
+        val thresholdY = height * 0.15
+        
+        // Directional Audio Cues: Pan linearly from -1.0 (left) to 1.0 (right) based on dx
+        val panValue = (dx.toFloat() / (width / 2f)).coerceIn(-1f, 1f)
+        
+        val hint = when {
+            dy < -thresholdY -> "Move slightly down"
+            dy > thresholdY -> "Move slightly up"
+            dx < -thresholdX -> "Move slightly right"
+            dx > thresholdX -> "Move slightly left"
+            box.width() < width * 0.3 -> "Bring it closer"
+            else -> ""
+        }
+        
+        if (hint.isNotEmpty()) {
+            globalTts?.setPitch(1.3f)
+            speak(hint, pan = panValue)
+            globalTts?.setPitch(1.0f)
+            lastHintTime = now
         }
     }
 
