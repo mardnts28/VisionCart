@@ -16,7 +16,7 @@
         android:layout_alignParentStart="true"
         android:scaleType="centerCrop"
         android:background="@drawable/bg_dark_rounded"
-        android:src="@drawable/ic_logo"/>
+        android:src="?attr/appLogo"/>
 
     <!--        ACTION BUTTONS           -->
     <LinearLayout

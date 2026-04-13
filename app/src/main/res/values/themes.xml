@@ -20,6 +20,7 @@
         <item name="appTextColor">@color/text_white</item>
         <item name="appTextSecondary">@color/text_gray</item>
         <item name="appNavColor">@color/nav_bg</item>
+        <item name="appLogo">@drawable/logo_yellow</item>
     </style>
 
     <!-- White on Dark Blue -->
@@ -37,6 +38,7 @@
         <item name="appTextColor">@color/text_white</item>
         <item name="appTextSecondary">#C5CAE9</item>
         <item name="appNavColor">#121854</item>
+        <item name="appLogo">@drawable/logo_blue</item>
     </style>
 
     <!-- Black on White -->
@@ -54,5 +56,6 @@
         <item name="appTextColor">#000000</item>
         <item name="appTextSecondary">#666666</item>
         <item name="appNavColor">#EEEEEE</item>
+        <item name="appLogo">@drawable/logo_black</item>
     </style>
 </resources>

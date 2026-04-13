@@ -209,8 +209,9 @@
                     android:id="@+id/ivProductBanner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_logo"/>
+                    android:scaleType="centerInside"
+                    android:padding="40dp"
+                    android:src="?attr/appLogo"/>
 
                 <!-- Category Badge -->
                 <TextView
@@ -856,8 +857,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_logo"
-                        android:tint="#AA66FF"
+                        android:src="?attr/appLogo"
                         android:layout_marginEnd="8dp"/>
                     <LinearLayout
                         android:layout_width="0dp"

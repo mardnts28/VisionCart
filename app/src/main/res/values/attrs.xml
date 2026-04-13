@@ -7,4 +7,5 @@
     <attr name="appTextColor" format="color" />
     <attr name="appTextSecondary" format="color" />
     <attr name="appNavColor" format="color" />
+    <attr name="appLogo" format="reference" />
 </resources>
