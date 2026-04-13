@@ -264,15 +264,19 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
             clean.contains("theme") || clean.contains("color") || clean.contains("scheme") -> {
-                toggleTheme()
+                when {
+                    clean.contains("blue") || clean.contains("white") -> setTheme("WhiteBlue")
+                    clean.contains("black") || clean.contains("dark") -> setTheme("BlackWhite")
+                    clean.contains("yellow") || clean.contains("default") -> setTheme("YellowBlack")
+                    else -> toggleTheme()
+                }
             }
             clean.contains("stop") || clean.contains("exit") || clean.contains("close") -> {
                 globalTts?.stop()
                 hideVoiceOverlay()
             }
-            clean.contains("ask gemini") || clean.contains("question") -> {
-                val q = clean.replace("ask gemini", "").replace("question", "").replace("go to", "").trim()
-                handleGeminiVoiceCommand(q)
+            clean.contains("ask gemini") || clean.contains("gemini search") || clean.contains("question") -> {
+                handleGeminiVoiceCommand()
             }
             else -> {
                 speak("I heard $command. You can say scan, history, or change theme.")
@@ -280,12 +284,23 @@ open class BaseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    protected open fun handleGeminiVoiceCommand(question: String) {
+    protected open fun handleGeminiVoiceCommand() {
         if (this is ProductDetailActivity) {
-            this.prepareGeminiQuestion(question)
+            this.prepareGeminiSearch()
         } else {
-            speak("Please open a product from history or scan one to ask Gemini details.")
+            speak("Please open a product first to use Gemini search.")
         }
+    }
+
+    private fun setTheme(theme: String) {
+        val prefs = getSharedPreferences("VisionCartPrefs", Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString("color_scheme", theme)
+            .putBoolean("skip_settings_intro", true)
+            .apply()
+        speak("Changing theme to $theme")
+        vibrateSuccess()
+        recreate()
     }
 
     protected fun toggleTheme() {

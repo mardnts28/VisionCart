@@ -222,30 +222,24 @@ class ProductDetailActivity : BaseActivity() {
             clean.contains("ingredients") -> speak("Ingredients for $name are: $ingredients")
             clean.contains("calories") -> speak("Checking nutrition...") 
             clean.contains("star") || clean.contains("save") -> toggleStar()
-            clean.contains("ask gemini") || clean.contains("question") -> {
-                val q = clean.replace("ask gemini", "").replace("question", "").replace("go to", "").trim()
-                prepareGeminiQuestion(q)
+            clean.contains("ask gemini") || clean.contains("gemini search") || clean.contains("question") -> {
+                prepareGeminiSearch()
             }
             else -> super.handleGlobalVoiceCommand(command)
         }
     }
 
-    fun prepareGeminiQuestion(question: String) {
+    fun prepareGeminiSearch() {
         val etQuestion = findViewById<EditText>(R.id.etQuestion)
-        if (question.isNotEmpty()) {
-            etQuestion.setText(question)
-            performAiQA()
-        } else {
-            // Scroll to the question section and focus it
-            val scrollView = findViewById<View>(R.id.detailScrollView)
-            scrollView.post {
-                scrollView.scrollTo(0, etQuestion.bottom)
-            }
-            etQuestion.requestFocus()
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(etQuestion, InputMethodManager.SHOW_IMPLICIT)
-            speak("I'm ready. What would you like to know about this product?")
+        // Scroll to the question section and focus it
+        val scrollView = findViewById<View>(R.id.detailScrollView)
+        scrollView?.post {
+            scrollView.scrollTo(0, etQuestion.bottom)
         }
+        etQuestion.requestFocus()
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(etQuestion, InputMethodManager.SHOW_IMPLICIT)
+        speak("How can I help you with this product?")
     }
 
     private fun startStructuredReadAloud() {
